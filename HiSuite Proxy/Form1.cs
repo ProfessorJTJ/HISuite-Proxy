@@ -87,6 +87,7 @@ namespace HiSuite_Proxy
                 {
                     textBox3.AppendText(e.HttpClient.Request.Url + Environment.NewLine);
                 }));
+                bool responded = false;
                 if (checkBox2.Checked)
                 {
                     string debug = e.HttpClient.Request.Url + " : " + Environment.NewLine;
@@ -118,6 +119,9 @@ namespace HiSuite_Proxy
                                 MessageBox.Show(resbody.Substring(where, finish - where), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }).Start();
                         }
+                        Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                        Headers.Add("Content-Type", new HttpHeader("Content-Type", "application/json;charset=utf8"));
+                        e.Ok("{\"status\":\"1\"}", Headers, true);
                     }
                     else if (reqeustURL.Contains("authorize.action"))
                     {
@@ -128,6 +132,7 @@ namespace HiSuite_Proxy
                         string respons = client.UploadString("https://query.hicloud.com:443/sp_ard_common/v1/authorize.action", updata);
                         Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
                         Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/plain;charset=UTF-8"));
+                        responded = true;
                         e.Ok(respons, Headers, true);
                     }
                     else if (e.HttpClient.Request.HasBody)
@@ -161,6 +166,7 @@ namespace HiSuite_Proxy
                                 }
                                 Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
                                 Headers.Add("Content-Type", new HttpHeader("Content-Type", "application/json;charset=utf8"));
+                                responded = true;
                                 e.Ok(responsedata, Headers, true);
                             }
                             else
@@ -168,9 +174,16 @@ namespace HiSuite_Proxy
                                 string responsedata = Encoding.UTF8.GetString(Properties.Resources.emptyresponse).Replace("\r\n", "");
                                 Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
                                 Headers.Add("Content-Type", new HttpHeader("Content-Type", "application/json;charset=utf8"));
+                                responded = true;
                                 e.Ok(responsedata, Headers, true);
                             }
                         }
+                    }
+                    if(responded == false)
+                    {
+                        Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                        Headers.Add("Content-Type", new HttpHeader("Content-Type", "application/json;charset=utf8"));
+                        e.Ok("{\"status\":\"1\"}", Headers, true);
                     }
                 }
             }

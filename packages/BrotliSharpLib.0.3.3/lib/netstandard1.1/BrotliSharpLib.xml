@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BrotliSharpLib</name>
+    </assembly>
+    <members>
+        <member name="T:BrotliSharpLib.Brotli">
+            <summary>
+            A class for compressing and decompressing data using the brotli algorithm.
+            </summary>
+        </member>
+        <member name="M:BrotliSharpLib.Brotli.DecompressBuffer(System.Byte[],System.Int32,System.Int32,System.Byte[])">
+            <summary>
+            Decompresses a byte array into a new byte array using brotli.
+            </summary>
+            <param name="buffer">The byte array to decompress.</param>
+            <param name="offset">The byte offset in <paramref name="buffer"/> to read from.</param>
+            <param name="length">The number of bytes to read.</param>
+            <param name="customDictionary">The custom dictionary that will be passed to the decoder</param>
+            <returns>The byte array in compressed form</returns>
+        </member>
+        <member name="M:BrotliSharpLib.Brotli.CompressBuffer(System.Byte[],System.Int32,System.Int32,System.Int32,System.Int32,System.Byte[])">
+            <summary>
+            Compresses a byte array into a new byte array using brotli.
+            </summary>
+            <param name="buffer">The byte array to compress.</param>
+            <param name="offset">The byte offset in <paramref name="buffer"/> to read from</param>.
+            <param name="length">The number of bytes to read.</param>
+            <param name="quality">The quality of the compression. This must be a value between 0 to 11 (inclusive).</param>
+            <param name="lgwin">The window size (in bits). This must be a value between 10 and 24 (inclusive).</param>
+            <param name="customDictionary">The custom dictionary that will be passed to the encoder.</param>
+            <returns></returns>
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliDecoderResult.BROTLI_DECODER_RESULT_ERROR">
+            <summary>Decoding error, e.g. corrupted input or memory allocation problem.</summary>
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliDecoderResult.BROTLI_DECODER_RESULT_SUCCESS">
+            <summary>Decoding successfully completed</summary>
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliDecoderResult.BROTLI_DECODER_RESULT_NEEDS_MORE_INPUT">
+            <summary>Partially done; should be called again with more input</summary>
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliDecoderResult.BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT">
+            <summary>Partially done; should be called again with more output</summary>
+        </member>
+        <member name="M:BrotliSharpLib.Brotli.GetEndianess">
+            <summary>
+            Detects the endianness of the current CPU
+            </summary>
+        </member>
+        <member name="M:BrotliSharpLib.Brotli.IsWhitelistedCPU">
+            <summary>
+            Determines if the current CPU supports unaligned reads
+            </summary>
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliEncoderOperation.BROTLI_OPERATION_PROCESS">
+             Process input.
+            
+             Encoder may postpone producing output, until it has processed enough input.
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliEncoderOperation.BROTLI_OPERATION_FLUSH">
+             Produce output for all processed input.
+            
+             Actual flush is performed when input stream is depleted and there is enough
+             space in output stream. This means that client should repeat
+             ::BROTLI_OPERATION_FLUSH operation until @p available_in becomes @c 0, and
+             ::BrotliEncoderHasMoreOutput returns ::BROTLI_FALSE.
+            
+             @warning Until flush is complete, client @b SHOULD @b NOT swap,
+                      reduce or extend input stream.
+            
+             When flush is complete, output data will be sufficient for decoder to
+             reproduce all the given input.
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliEncoderOperation.BROTLI_OPERATION_FINISH">
+             Finalize the stream.
+            
+             Actual finalization is performed when input stream is depleted and there is
+             enough space in output stream. This means that client should repeat
+             ::BROTLI_OPERATION_FLUSH operation until @p available_in becomes @c 0, and
+             ::BrotliEncoderHasMoreOutput returns ::BROTLI_FALSE.
+            
+             @warning Until finalization is complete, client @b SHOULD @b NOT swap,
+                      reduce or extend input stream.
+            
+             Helper function ::BrotliEncoderIsFinished checks if stream is finalized and
+             output fully dumped.
+            
+             Adding more input data to finalized stream is impossible.
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliEncoderOperation.BROTLI_OPERATION_EMIT_METADATA">
+             Emit metadata block to stream.
+            
+             Metadata is opaque to Brotli: neither encoder, nor decoder processes this
+             data or relies on it. It may be used to pass some extra information from
+             encoder client to decoder client without interfering with main data stream.
+            
+             @note Encoder may emit empty metadata blocks internally, to pad encoded
+                   stream to byte boundary.
+            
+             @warning Until emitting metadata is complete client @b SHOULD @b NOT swap,
+                      reduce or extend input stream.
+            
+             @warning The whole content of input buffer is considered to be the content
+                      of metadata block. Do @b NOT @e append metadata to input stream,
+                      before it is depleted with other operations.
+            
+             Stream is soft-flushed before metadata block is emitted. Metadata block
+             @b MUST be no longer than than 16MiB.
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliEncoderMode.BROTLI_MODE_GENERIC">
+             Default compression mode.
+            
+             In this mode compressor does not know anything in advance about the
+             properties of the input.
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliEncoderMode.BROTLI_MODE_TEXT">
+            Compression mode for UTF-8 formatted text input. 
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliEncoderMode.BROTLI_MODE_FONT">
+            Compression mode used in WOFF 2.0. 
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliEncoderParameter.BROTLI_PARAM_MODE">
+             Tune encoder for specific input.
+            
+             ::BrotliEncoderMode enumerates all available values.
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliEncoderParameter.BROTLI_PARAM_QUALITY">
+             The main compression speed-density lever.
+            
+             The higher the quality, the slower the compression. Range is
+             from ::BROTLI_MIN_QUALITY to ::BROTLI_MAX_QUALITY.
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:BrotliSharpLib.Brotli.BrotliEncoderParameter.BROTLI_PARAM_LGWIN" -->
+        <!-- Badly formed XML comment ignored for member "F:BrotliSharpLib.Brotli.BrotliEncoderParameter.BROTLI_PARAM_LGBLOCK" -->
+        <member name="F:BrotliSharpLib.Brotli.BrotliEncoderParameter.BROTLI_PARAM_DISABLE_LITERAL_CONTEXT_MODELING">
+             Flag that affects usage of "literal context modeling" format feature.
+            
+             This flag is a "decoding-speed vs compression ratio" trade-off.
+        </member>
+        <member name="F:BrotliSharpLib.Brotli.BrotliEncoderParameter.BROTLI_PARAM_SIZE_HINT">
+             Estimated total input size for all ::BrotliEncoderCompressStream calls.
+            
+             The default value is 0, which means that the total input size is unknown.
+        </member>
+        <member name="T:BrotliSharpLib.BrotliStream">
+            <summary>
+            Represents a Brotli stream for compression or decompression.
+            </summary>
+        </member>
+        <member name="M:BrotliSharpLib.BrotliStream.#ctor(System.IO.Stream,System.IO.Compression.CompressionMode,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BrotliSharpLib.BrotliStream"/> class using the specified stream and
+            compression mode, and optionally leaves the stream open.
+            </summary>
+            <param name="stream">The stream to compress or decompress.</param>
+            <param name="mode">One of the enumeration values that indicates whether to compress or decompress the stream.</param>
+            <param name="leaveOpen"><c>true</c> to leave the stream open after disposing the <see cref="T:BrotliSharpLib.BrotliStream"/> object; otherwise, <c>false</c>.</param>
+        </member>
+        <member name="M:BrotliSharpLib.BrotliStream.#ctor(System.IO.Stream,System.IO.Compression.CompressionMode)">
+            <summary>
+            Initializes a new instance of the <see cref="T:BrotliSharpLib.BrotliStream"/> class using the specified stream and
+            compression mode.
+            </summary>
+            <param name="stream">The stream to compress or decompress.</param>
+            <param name="mode">One of the enumeration values that indicates whether to compress or decompress the stream.</param>
+        </member>
+        <member name="M:BrotliSharpLib.BrotliStream.Finalize">
+            <summary>
+            Ensures that resources are freed and other cleanup operations are performed when the garbage collector reclaims the <see cref="T:BrotliSharpLib.BrotliStream"/>.
+            </summary>
+        </member>
+        <member name="M:BrotliSharpLib.BrotliStream.SetQuality(System.Int32)">
+            <summary>
+            Sets the quality for compression.
+            </summary>
+            <param name="quality">The quality value (a value from 0-11).</param>
+        </member>
+        <member name="M:BrotliSharpLib.BrotliStream.SetCustomDictionary(System.Byte[])">
+            <summary>
+            Sets the dictionary for compression and decompression.
+            </summary>
+            <param name="dictionary">The dictionary as a byte array.</param>
+        </member>
+        <member name="M:BrotliSharpLib.BrotliStream.SetWindow(System.Int32)">
+            <summary>
+            Sets the window size for the encoder
+            </summary>
+            <param name="windowSize">The window size in bits (a value from 10-24)</param>
+        </member>
+        <member name="M:BrotliSharpLib.BrotliStream.Dispose(System.Boolean)">
+            <summary>
+            Releases the unmanaged resources used by the <see cref="T:BrotliSharpLib.BrotliStream"/> and optionally releases the managed resources.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:BrotliSharpLib.BrotliStream.Flush">
+            <summary>
+            Flushes any buffered data into the stream
+            </summary>
+        </member>
+        <member name="M:BrotliSharpLib.BrotliStream.Seek(System.Int64,System.IO.SeekOrigin)">
+            <summary>
+            This operation is not supported and always throws a <see cref="T:System.NotSupportedException"/>.
+            </summary>
+        </member>
+        <member name="M:BrotliSharpLib.BrotliStream.SetLength(System.Int64)">
+            <summary>
+            This operation is not supported and always throws a <see cref="T:System.NotSupportedException"/>.
+            </summary>
+        </member>
+        <member name="M:BrotliSharpLib.BrotliStream.Read(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Reads a number of decompressed bytes into the specified byte array.
+            </summary>
+            <param name="buffer">The array to store decompressed bytes.</param>
+            <param name="offset">The byte offset in <paramref name="buffer"/> at which the read bytes will be placed.</param>
+            <param name="count">The maximum number of decompressed bytes to read.</param>
+            <returns>The number of bytes that were read into the byte array.</returns>
+        </member>
+        <member name="M:BrotliSharpLib.BrotliStream.Write(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Writes compressed bytes to the underlying stream from the specified byte array.
+            </summary>
+            <param name="buffer">The buffer that contains the data to compress.</param>
+            <param name="offset">The byte offset in <paramref name="buffer"/> from which the bytes will be read.</param>
+            <param name="count">The maximum number of bytes to write.</param>
+        </member>
+        <member name="P:BrotliSharpLib.BrotliStream.CanRead">
+            <summary>
+            Gets a value indicating whether the stream supports reading while decompressing a file.
+            </summary>
+        </member>
+        <member name="P:BrotliSharpLib.BrotliStream.CanSeek">
+            <summary>
+            Gets a value indicating whether the stream supports seeking.
+            </summary>
+        </member>
+        <member name="P:BrotliSharpLib.BrotliStream.CanWrite">
+            <summary>
+            Gets a value indicating whether the stream supports writing.
+            </summary>
+        </member>
+        <member name="P:BrotliSharpLib.BrotliStream.Length">
+            <summary>
+            This property is not supported and always throws a <see cref="T:System.NotSupportedException"/>.
+            </summary>
+        </member>
+        <member name="P:BrotliSharpLib.BrotliStream.Position">
+            <summary>
+            This property is not supported and always throws a <see cref="T:System.NotSupportedException"/>.
+            </summary>
+        </member>
+    </members>
+</doc>

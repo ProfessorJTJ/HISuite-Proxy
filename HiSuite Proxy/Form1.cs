@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,9 +68,16 @@ namespace HiSuite_Proxy
         private string GetURLVersion(string url)
         {
             int where = url.IndexOf("/v");
-            where += 2;
-            int finish = url.IndexOf('/', where);
-            return url.Substring(where, finish - where);
+            if(where == -1)
+            {
+                return "";
+            }
+            else
+            {
+                where += 2;
+                int finish = url.IndexOf('/', where);
+                return url.Substring(where, finish - where);
+            }
         }
         private async Task Proxyserver_BeforeRequest(object sender, Titanium.Web.Proxy.EventArguments.SessionEventArgs e)
         {
@@ -86,7 +93,6 @@ namespace HiSuite_Proxy
                     List<HttpHeader> clientheaders = e.HttpClient.Request.Headers.GetAllHeaders();
                     for (int i = 0, j = clientheaders.Count; i < j; i++)
                     {
-                        ;
                         debug += clientheaders[i].Name + ": " + clientheaders[i].Value + Environment.NewLine;
                     }
                     if (e.HttpClient.Request.HasBody)

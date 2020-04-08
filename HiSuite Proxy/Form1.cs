@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -232,13 +232,13 @@ namespace HiSuite_Proxy
 
         private void Patch(string filename)
         {
-            string filedata = File.ReadAllText(filename, Encoding.UTF7);
+            string filedata = File.ReadAllText(filename, Encoding.GetEncoding("Windows-1252"));
 
-            if (PatcherReplace(new byte[] { 0xE8, 0x74, 0xFC, 0xFF, 0xFF }, "", ref filedata))
+            if (PatcherReplace(new byte[] { 0xE8, 0x74, 0xFC, 0xFF, 0xFF }, new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, ref filedata))
             {
-                if(PatcherReplace(new byte[] { 0xFF, 0x15, 0x90, 0x32, 0x01, 0x10 }, "", ref filedata))
+                if(PatcherReplace(new byte[] { 0xFF, 0x15, 0x90, 0x32, 0x01, 0x10 }, new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, ref filedata))
                 {
-                    if (PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, "roast.hiuawei.org", ref filedata))
+                    if (PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, new byte[] { 0x72, 0x6f, 0x61, 0x73, 0x74, 0x2e, 0x68, 0x69, 0x75, 0x61, 0x77, 0x65, 0x69, 0x2e, 0x6f, 0x72, 0x67 }, ref filedata))
                     {
                         SaveFileDialog dialog = new SaveFileDialog();
                         dialog.Filter = "Dynamic-link library|*.dll";
@@ -247,7 +247,7 @@ namespace HiSuite_Proxy
                         {
                             try
                             {
-                                File.WriteAllBytes(dialog.FileName, Encoding.UTF7.GetBytes(filedata));
+                                File.WriteAllText(dialog.FileName, filedata, Encoding.GetEncoding("Windows-1252"));
                                 MessageBox.Show("Successfully Patched!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                             catch(Exception e)
@@ -271,12 +271,12 @@ namespace HiSuite_Proxy
                 MessageBox.Show("This file is already patched.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-        private bool PatcherReplace(byte[] data, string with, ref string basedata, int replaceindx = 0)
+        private bool PatcherReplace(byte[] data, byte[] replacewith, ref string basedata)
         {
-            string finddata = Encoding.UTF7.GetString(data);
+            string finddata = Encoding.GetEncoding("Windows-1252").GetString(data);
             if (basedata.Contains(finddata))
             {
-                basedata = basedata.Replace(finddata, finddata.Substring(0, replaceindx) + with);
+                basedata = basedata.Replace(finddata, Encoding.GetEncoding("Windows-1252").GetString(replacewith));
                 return true;
             }
             else

@@ -3,6 +3,7 @@ Modifying HiSuite and manipulating it's connection data to install Roms before t
 
 ![GitHub Logo](http://uupload.ir/files/yafo_bandicam_2020-04-07_13-03-45-612.jpg)
 
+0. Download and install HISuite V10.0.0.510 or V10.0.1.100
 1. Remove TeamMT host address from Windows/System32/Drivers/etc/Hosts (just incase you've edited that file before.
 2. Click on HTTP Component, choose the official httpcomponent.dll, pick a folder to save the patched one, replace the patched one with the official httpcomponent.dll.
 3. Open hisuite, go to settings and set proxy as 127.0.0.1 and port 7777

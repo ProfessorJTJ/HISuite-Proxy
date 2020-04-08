@@ -104,7 +104,13 @@ namespace HiSuite_Proxy
                 string reqeustURL = e.HttpClient.Request.Url;
                 if (reqeustURL.Contains("query.hicloud.com"))
                 {
-                    if (reqeustURL.Contains("CouplingReport.action"))
+                    if (reqeustURL.Contains("CheckNewVersion.aspx"))
+                    {
+                        Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                        Headers.Add("Content-Type", new HttpHeader("Content-Type", "application/xml;charset=UTF-8"));
+                        e.Ok("<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><status>1</status></root>", Headers, true);
+                    }
+                    else if (reqeustURL.Contains("CouplingReport.action"))
                     {
                         string resbody = await e.GetRequestBodyAsString();
                         int where = resbody.IndexOf("descinfo");
@@ -236,9 +242,9 @@ namespace HiSuite_Proxy
 
             if (PatcherReplace(new byte[] { 0xE8, 0x74, 0xFC, 0xFF, 0xFF }, new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, ref filedata))
             {
-                if(PatcherReplace(new byte[] { 0xFF, 0x15, 0x90, 0x32, 0x01, 0x10 }, new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, ref filedata))
+                if(PatcherReplace(new byte[] { 0xFF, 0x15, 0xC4, 0x32, 0x01, 0x10 }, new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, ref filedata))
                 {
-                    if (PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, new byte[] { 0x72, 0x6f, 0x61, 0x73, 0x74, 0x2e, 0x68, 0x69, 0x75, 0x61, 0x77, 0x65, 0x69, 0x2e, 0x6f, 0x72, 0x67 }, ref filedata))
+                    if (PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, new byte[] { 0x70, 0x70, 0x70, 0x70, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, ref filedata))
                     {
                         SaveFileDialog dialog = new SaveFileDialog();
                         dialog.Filter = "Dynamic-link library|*.dll";

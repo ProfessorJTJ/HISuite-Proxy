@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +24,6 @@ namespace HiSuite_Proxy
             {
                 proxyserver.Stop();
             };
-
             try
             {
                 proxyserver.CertificateManager.CreateRootCertificate(true);
@@ -70,7 +69,7 @@ namespace HiSuite_Proxy
             int where = url.IndexOf("/v");
             if(where == -1)
             {
-                return "";
+                return "Unknown";
             }
             else
             {
@@ -118,9 +117,6 @@ namespace HiSuite_Proxy
                                 MessageBox.Show(resbody.Substring(where, finish - where), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }).Start();
                         }
-                        Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
-                        Headers.Add("Content-Type", new HttpHeader("Content-Type", "application/json;charset=utf8"));
-                        e.Ok("{\"status\":\"1\"}", Headers, true);
                     }
                     else if (reqeustURL.Contains("authorize.action"))
                     {
@@ -153,14 +149,33 @@ namespace HiSuite_Proxy
                             }
                             if (pacakgetype == opscheck)
                             {
-                                string responsedata = Encoding.UTF8.GetString(Properties.Resources.responsedata).Replace("\r\n", "").Replace("WriteVerionID", GetURLVersion(textBox1.Text)).Replace("VersionURL", textBox1.Text).Replace("WiteVerionID", GetURLVersion(textBox4.Text)).Replace("VrsionURL", textBox4.Text);
+                                string responsedata = Encoding.UTF8.GetString(Properties.Resources.responsedata).Replace("\r\n", "");
+                                responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text));
+                                responsedata = responsedata.Replace("VersionURL", textBox1.Text);
+                                responsedata = responsedata.Replace("Unknown1", textBox2.Text);
+
                                 if (checkBox1.Checked)
                                 {
+                                    responsedata = responsedata.Replace("WiteVerionID", GetURLVersion(textBox4.Text));
+                                    responsedata = responsedata.Replace("VrsionURL", textBox4.Text);
+                                    responsedata = responsedata.Replace("Unknown2", textBox5.Text);
                                     responsedata = responsedata.Replace("hasreloadedpackage", "0");
                                 }
                                 else
                                 {
                                     responsedata = responsedata.Replace("hasreloadedpackage", "1");
+                                }
+
+                                if (checkBox3.Checked)
+                                {
+                                    responsedata = responsedata.Replace("WteVerionID", GetURLVersion(textBox7.Text));
+                                    responsedata = responsedata.Replace("VrionURL", textBox7.Text);
+                                    responsedata = responsedata.Replace("Unknown3", textBox6.Text);
+                                    responsedata = responsedata.Replace("hascustpackage", "0");
+                                }
+                                else
+                                {
+                                    responsedata = responsedata.Replace("hascustpackage", "1");
                                 }
                                 Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
                                 Headers.Add("Content-Type", new HttpHeader("Content-Type", "application/json;charset=utf8"));
@@ -185,7 +200,6 @@ namespace HiSuite_Proxy
                 }));
             }
         }
-
         private Task Proxyserver_ServerCertificateValidationCallback(object sender, Titanium.Web.Proxy.EventArguments.CertificateValidationEventArgs e)
         {
             e.IsValid = true;
@@ -194,8 +208,8 @@ namespace HiSuite_Proxy
 
         private void button3_Click(object sender, EventArgs e)
         {
-            this.Size = new System.Drawing.Size(410, 430);
-            textBox3.Location = new System.Drawing.Point(12, 153);
+            this.Size = new System.Drawing.Size(410, 460);
+            textBox3.Location = new System.Drawing.Point(12, 188);
             textBox3.Size = new System.Drawing.Size(374, 232);
             textBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
             textBox3.Visible = true;
@@ -208,12 +222,66 @@ namespace HiSuite_Proxy
 
         private void button2_Click(object sender, EventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog();
+            OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "Dynamic-link library|*.dll";
-            dialog.FileName = "httpcomponent.dll";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                File.WriteAllBytes(dialog.FileName, Properties.Resources.httpcomponent);
+                Patch(dialog.FileName);
+            }
+        }
+
+        private void Patch(string filename)
+        {
+            string filedata = File.ReadAllText(filename, Encoding.UTF7);
+
+            if (PatcherReplace(new byte[] { 0xE8, 0x74, 0xFC, 0xFF, 0xFF }, "", ref filedata))
+            {
+                if(PatcherReplace(new byte[] { 0xFF, 0x15, 0x90, 0x32, 0x01, 0x10 }, "", ref filedata))
+                {
+                    if (PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, "roast.hiuawei.org", ref filedata))
+                    {
+                        SaveFileDialog dialog = new SaveFileDialog();
+                        dialog.Filter = "Dynamic-link library|*.dll";
+                        dialog.FileName = "httpcomponent.dll";
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                        {
+                            try
+                            {
+                                File.WriteAllBytes(dialog.FileName, Encoding.UTF7.GetBytes(filedata));
+                                MessageBox.Show("Successfully Patched!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            catch(Exception e)
+                            {
+                                MessageBox.Show(e.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Some errors occured in the patching process!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Some errors occured in the patching process!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("This file is already patched.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+        private bool PatcherReplace(byte[] data, string with, ref string basedata, int replaceindx = 0)
+        {
+            string finddata = Encoding.UTF7.GetString(data);
+            if (basedata.Contains(finddata))
+            {
+                basedata = basedata.Replace(finddata, finddata.Substring(0, replaceindx) + with);
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }

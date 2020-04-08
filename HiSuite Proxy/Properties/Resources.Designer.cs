@@ -73,16 +73,6 @@ namespace HiSuite_Proxy.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] httpcomponent {
-            get {
-                object obj = ResourceManager.GetObject("httpcomponent", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] responsedata {
             get {
                 object obj = ResourceManager.GetObject("responsedata", resourceCulture);

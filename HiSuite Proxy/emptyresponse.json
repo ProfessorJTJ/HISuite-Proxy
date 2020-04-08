@@ -1,0 +1,21 @@
+{
+"status": "1",
+"versionPackageCheckResults": [
+{
+"status": "1",
+"versionPackageType": 2
+},
+{
+"status": "1",
+"autoPollingCycle": "1",
+"versionPackageType": 3,
+"checkEnd": "1"
+},
+{
+"status": "1",
+"autoPollingCycle": "1",
+"versionPackageType": 4,
+"checkEnd": "1"
+}
+]
+}

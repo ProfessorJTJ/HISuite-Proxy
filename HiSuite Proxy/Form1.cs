@@ -22,7 +22,14 @@ namespace HiSuite_Proxy
             InitializeComponent();
             this.FormClosing += delegate
             {
-                proxyserver.Stop();
+                try
+                {
+                    proxyserver.Stop();
+                }
+                catch
+                {
+
+                }
             };
             try
             {
@@ -40,6 +47,7 @@ namespace HiSuite_Proxy
             catch(Exception ex)
             {
                 textBox3.AppendText(ex.StackTrace);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             
             textBox3.ScrollBars = ScrollBars.Both;
@@ -133,7 +141,10 @@ namespace HiSuite_Proxy
                         string respons = client.UploadString("https://query.hicloud.com:443/sp_ard_common/v1/authorize.action", updata);
                         Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
                         Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/plain;charset=UTF-8"));
-                        e.Ok(respons, Headers, true);
+                        Headers.Add("X-Content-Type-Options", new HttpHeader("X-Content-Type-Options", "nosniff"));
+                        Headers.Add("Server", new HttpHeader("Server", "elb"));
+                        Headers.Add("X-XSS-Protection", new HttpHeader("X-XSS-Protection", "1; mode=block"));
+                        e.Ok(respons, Headers);
                     }
                     else if (e.HttpClient.Request.HasBody)
                     {
@@ -156,9 +167,17 @@ namespace HiSuite_Proxy
                             if (pacakgetype == opscheck)
                             {
                                 string responsedata = Encoding.UTF8.GetString(Properties.Resources.responsedata).Replace("\r\n", "");
-                                responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text));
-                                responsedata = responsedata.Replace("VersionURL", textBox1.Text);
-                                responsedata = responsedata.Replace("Unknown1", textBox2.Text);
+                                if(GetURLVersion(textBox1.Text) != "Unknown")
+                                {
+                                    responsedata = responsedata.Replace("hasfullpackage", "0");
+                                    responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text));
+                                    responsedata = responsedata.Replace("VersionURL", textBox1.Text);
+                                    responsedata = responsedata.Replace("Unknown1", textBox2.Text);
+                                }
+                                else
+                                {
+                                    responsedata = responsedata.Replace("hasfullpackage", "1");
+                                }
 
                                 if (checkBox1.Checked)
                                 {
@@ -230,6 +249,7 @@ namespace HiSuite_Proxy
         {
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "Dynamic-link library|*.dll";
+            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + @"\HiSuite";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 Patch(dialog.FileName);
@@ -238,12 +258,10 @@ namespace HiSuite_Proxy
 
         private void Patch(string filename)
         {
-            string filedata = File.ReadAllText(filename, Encoding.GetEncoding("Windows-1252"));
+            string filedata = File.ReadAllText(filename, Encoding.Default);
 
-            if (PatcherReplace(new byte[] { 0xE8, 0x74, 0xFC, 0xFF, 0xFF }, new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90 }, ref filedata))
+            if (PatcherReplace(new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0x51, 0xFF, 0x15, 0xC4, 0x32, 0x01, 0x10 }, new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0x51, 0xFF, 0x15, 0xC4, 0x32, 0x01, 0x10 }, ref filedata))
             {
-                if(PatcherReplace(new byte[] { 0xFF, 0x15, 0xC4, 0x32, 0x01, 0x10 }, new byte[] { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, ref filedata))
-                {
                     if (PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, new byte[] { 0x70, 0x70, 0x70, 0x70, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, ref filedata))
                     {
                         SaveFileDialog dialog = new SaveFileDialog();
@@ -253,7 +271,7 @@ namespace HiSuite_Proxy
                         {
                             try
                             {
-                                File.WriteAllText(dialog.FileName, filedata, Encoding.GetEncoding("Windows-1252"));
+                                File.WriteAllText(dialog.FileName, filedata, Encoding.Default);
                                 MessageBox.Show("Successfully Patched!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                             catch(Exception e)
@@ -266,11 +284,6 @@ namespace HiSuite_Proxy
                     {
                         MessageBox.Show("Some errors occured in the patching process!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                }
-                else
-                {
-                    MessageBox.Show("Some errors occured in the patching process!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
             }
             else
             {
@@ -279,10 +292,10 @@ namespace HiSuite_Proxy
         }
         private bool PatcherReplace(byte[] data, byte[] replacewith, ref string basedata)
         {
-            string finddata = Encoding.GetEncoding("Windows-1252").GetString(data);
+            string finddata = Encoding.Default.GetString(data);
             if (basedata.Contains(finddata))
             {
-                basedata = basedata.Replace(finddata, Encoding.GetEncoding("Windows-1252").GetString(replacewith));
+                basedata = basedata.Replace(finddata, Encoding.Default.GetString(replacewith));
                 return true;
             }
             else

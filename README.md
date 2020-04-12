@@ -1,4 +1,4 @@
-# HISuite-Proxy
+# [HISuite-Proxy](https://github.com/ProfessorJTJ/HISuite-Proxy/releases/latest)
 Modifying HiSuite and manipulating it's connection data to install Roms before they officially get released.
 
 ![GitHub Logo](http://uupload.ir/files/mdq8_capture.png)

@@ -164,6 +164,10 @@ namespace HiSuite_Proxy
                             {
                                 opscheck = "full_back";
                             }
+                            else if(radioButton4.Checked)
+                            {
+                                opscheck = "full_recovery";
+                            }
                             if (pacakgetype == opscheck)
                             {
                                 string responsedata = Encoding.UTF8.GetString(Properties.Resources.responsedata).Replace("\r\n", "");
@@ -233,7 +237,7 @@ namespace HiSuite_Proxy
 
         private void button3_Click(object sender, EventArgs e)
         {
-            this.Size = new System.Drawing.Size(410, 460);
+            this.Size = new System.Drawing.Size(415, 460);
             textBox3.Location = new System.Drawing.Point(12, 188);
             textBox3.Size = new System.Drawing.Size(374, 232);
             textBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;

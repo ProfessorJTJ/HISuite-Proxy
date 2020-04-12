@@ -2,7 +2,7 @@
 "status": "0",
 "versionPackageCheckResults": [
 {
-"status": "0",
+"status": "hasfullpackage",
 "autoPollingCycle": "1",
 "versionPackageType": 2,
 "components": [

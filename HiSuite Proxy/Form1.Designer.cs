@@ -1,4 +1,4 @@
-﻿namespace HiSuite_Proxy
+namespace HiSuite_Proxy
 {
     partial class Form1
     {
@@ -51,6 +51,7 @@
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.textBox7 = new System.Windows.Forms.TextBox();
+            this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // textBox1
@@ -59,7 +60,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox1.Location = new System.Drawing.Point(96, 10);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(165, 20);
+            this.textBox1.Size = new System.Drawing.Size(177, 20);
             this.textBox1.TabIndex = 0;
             this.textBox1.Text = "http://update.dbankcdn.com/TDS/data/files/p3/s15/G5398/g1755/v386379/f1/";
             // 
@@ -75,7 +76,7 @@
             // textBox3
             // 
             this.textBox3.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.textBox3.Location = new System.Drawing.Point(136, 157);
+            this.textBox3.Location = new System.Drawing.Point(142, 157);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(93, 56);
@@ -126,7 +127,7 @@
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(168, 94);
+            this.button1.Location = new System.Drawing.Point(180, 94);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(88, 23);
             this.button1.TabIndex = 9;
@@ -137,7 +138,7 @@
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(262, 94);
+            this.button2.Location = new System.Drawing.Point(274, 94);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(110, 23);
             this.button2.TabIndex = 10;
@@ -148,7 +149,7 @@
             // button3
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(262, 123);
+            this.button3.Location = new System.Drawing.Point(274, 123);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(110, 23);
             this.button3.TabIndex = 11;
@@ -160,7 +161,7 @@
             // 
             this.radioButton1.AutoSize = true;
             this.radioButton1.Checked = true;
-            this.radioButton1.Location = new System.Drawing.Point(172, 122);
+            this.radioButton1.Location = new System.Drawing.Point(170, 122);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(76, 17);
             this.radioButton1.TabIndex = 12;
@@ -171,7 +172,7 @@
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(17, 142);
+            this.radioButton2.Location = new System.Drawing.Point(11, 143);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(92, 17);
             this.radioButton2.TabIndex = 13;
@@ -181,7 +182,7 @@
             // radioButton3
             // 
             this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(119, 142);
+            this.radioButton3.Location = new System.Drawing.Point(103, 143);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(85, 17);
             this.radioButton3.TabIndex = 14;
@@ -194,7 +195,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox4.Location = new System.Drawing.Point(96, 55);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(165, 20);
+            this.textBox4.Size = new System.Drawing.Size(177, 20);
             this.textBox4.TabIndex = 15;
             this.textBox4.Text = "http://update.dbankcdn.com/TDS/data/files/p3/s15/G5398/g1755/v386373/f1/";
             // 
@@ -210,7 +211,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(119, 165);
+            this.checkBox1.Location = new System.Drawing.Point(103, 167);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(99, 17);
             this.checkBox1.TabIndex = 17;
@@ -221,7 +222,7 @@
             // 
             this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(266, 157);
+            this.checkBox2.Location = new System.Drawing.Point(274, 164);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(99, 17);
             this.checkBox2.TabIndex = 18;
@@ -231,7 +232,7 @@
             // textBox2
             // 
             this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox2.Location = new System.Drawing.Point(267, 10);
+            this.textBox2.Location = new System.Drawing.Point(279, 10);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(116, 20);
             this.textBox2.TabIndex = 19;
@@ -240,7 +241,7 @@
             // textBox5
             // 
             this.textBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox5.Location = new System.Drawing.Point(267, 55);
+            this.textBox5.Location = new System.Drawing.Point(279, 55);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(116, 20);
             this.textBox5.TabIndex = 20;
@@ -249,7 +250,7 @@
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(17, 165);
+            this.checkBox3.Location = new System.Drawing.Point(12, 165);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(80, 17);
             this.checkBox3.TabIndex = 21;
@@ -259,7 +260,7 @@
             // textBox6
             // 
             this.textBox6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox6.Location = new System.Drawing.Point(267, 32);
+            this.textBox6.Location = new System.Drawing.Point(279, 32);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(116, 20);
             this.textBox6.TabIndex = 24;
@@ -280,15 +281,25 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox7.Location = new System.Drawing.Point(96, 32);
             this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(165, 20);
+            this.textBox7.Size = new System.Drawing.Size(177, 20);
             this.textBox7.TabIndex = 22;
             this.textBox7.Text = "http://update.dbankcdn.com/TDS/data/files/p3/s15/G5398/g1755/v386370/f1/";
+            // 
+            // radioButton4
+            // 
+            this.radioButton4.AutoSize = true;
+            this.radioButton4.Location = new System.Drawing.Point(186, 143);
+            this.radioButton4.Name = "radioButton4";
+            this.radioButton4.Size = new System.Drawing.Size(89, 17);
+            this.radioButton4.TabIndex = 25;
+            this.radioButton4.Text = "Recovery OS";
+            this.radioButton4.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(391, 192);
+            this.ClientSize = new System.Drawing.Size(403, 192);
             this.Controls.Add(this.textBox6);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBox7);
@@ -299,8 +310,6 @@
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.radioButton3);
-            this.Controls.Add(this.radioButton2);
             this.Controls.Add(this.radioButton1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -312,6 +321,9 @@
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.radioButton4);
+            this.Controls.Add(this.radioButton3);
+            this.Controls.Add(this.radioButton2);
             this.Name = "Form1";
             this.Text = "HISuite Proxy";
             this.ResumeLayout(false);
@@ -344,6 +356,6 @@
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.RadioButton radioButton4;
     }
 }
-

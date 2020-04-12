@@ -20,3 +20,5 @@ Preload: http://update.dbankcdn.com/TDS/data/files/p3/s15/G5398/g1755/v341267/f1
 
 
 "Debug Logging" Logs the incoming requests inside logs.txt file, near the application, can be checked for further infomration about the installation process.
+
+[System Recovery Rom Instruction](https://github.com/ProfessorJTJ/HISuite-Proxy/wiki/System-Recovery-Rom-Instruction)

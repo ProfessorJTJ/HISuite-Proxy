@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,8 +9,6 @@ using System.Threading;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net.Sockets;
-using System.Net.Security;
 
 namespace HiSuite_Proxy
 {
@@ -237,9 +235,9 @@ namespace HiSuite_Proxy
 
         private void button3_Click(object sender, EventArgs e)
         {
-            this.Size = new System.Drawing.Size(415, 460);
-            textBox3.Location = new System.Drawing.Point(12, 188);
-            textBox3.Size = new System.Drawing.Size(374, 232);
+            this.Size = new System.Drawing.Size(430, 450);
+            textBox3.Location = new System.Drawing.Point(10, 168);
+            textBox3.Size = new System.Drawing.Size(400, 237);
             textBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
             textBox3.Visible = true;
         }

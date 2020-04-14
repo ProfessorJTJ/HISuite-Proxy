@@ -1,7 +1,7 @@
 # [HISuite-Proxy](https://github.com/ProfessorJTJ/HISuite-Proxy/releases/latest)
 Modifying HiSuite and manipulating it's connection data to install Roms before they officially get released.
 
-![GitHub Logo](http://uupload.ir/files/mdq8_capture.png)
+<a href="https://github.com/ProfessorJTJ/HISuite-Proxy/wiki"><img src="http://uupload.ir/files/mdq8_capture.png"/></a>
 
 0. Download and install HISuite V10.0.0.510 or V10.0.1.100
 1. Remove TeamMT host address from Windows/System32/Drivers/etc/Hosts (just incase you've edited that file before.

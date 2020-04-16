@@ -37,13 +37,17 @@ namespace HiSuite_Proxy
             mytoolbar.DoubleClick += delegate
             {
                 mytoolbar.Visible = false;
-                WindowState = FormWindowState.Normal;
                 this.Show();
+                WindowState = FormWindowState.Normal;
+                this.BringToFront();
+                this.Focus();
             };
             this.FormClosing += delegate
             {
                 try
                 {
+                    mytoolbar.Visible = false;
+                    mytoolbar.Dispose();
                     proxyserver.DisableSystemProxy(ProxyProtocolType.AllHttp);
                     proxyserver.Stop();
                 }

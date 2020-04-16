@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,18 +15,50 @@ namespace HiSuite_Proxy
     public partial class Form1 : Form
     {
         ProxyServer proxyserver = new ProxyServer();
+        ExplicitProxyEndPoint endpoint = new ExplicitProxyEndPoint(IPAddress.Any, 7777);
+        bool xdaremoveads = false;
+        NotifyIcon mytoolbar = new NotifyIcon();
         public Form1()
         {
             InitializeComponent();
+            mytoolbar.Visible = false;
+            mytoolbar.Text = "HISuite Proxy";
+            mytoolbar.Icon = this.Icon;
+            MenuItem item = new MenuItem();
+            item.Text = "Exit";
+            item.Click += delegate
+            {
+                mytoolbar.Visible = false;
+                this.Close();
+            };
+            MenuItem[] menuItem = { item };
+
+            mytoolbar.ContextMenu = new ContextMenu(menuItem);
+            mytoolbar.DoubleClick += delegate
+            {
+                mytoolbar.Visible = false;
+                WindowState = FormWindowState.Normal;
+                this.Show();
+            };
             this.FormClosing += delegate
             {
                 try
                 {
+                    proxyserver.DisableSystemProxy(ProxyProtocolType.AllHttp);
                     proxyserver.Stop();
                 }
                 catch
                 {
 
+                }
+            };
+            this.Resize += delegate
+            {
+                if(WindowState == FormWindowState.Minimized)
+                {
+                    mytoolbar.Visible = true;
+
+                    this.Hide();
                 }
             };
             try
@@ -36,7 +68,7 @@ namespace HiSuite_Proxy
 
                 proxyserver.ServerCertificateValidationCallback += Proxyserver_ServerCertificateValidationCallback;
                 proxyserver.BeforeRequest += Proxyserver_BeforeRequest;
-                ExplicitProxyEndPoint endpoint = new ExplicitProxyEndPoint(IPAddress.Any, 7777);
+                proxyserver.BeforeResponse += Proxyserver_BeforeResponse;
 
                 proxyserver.AddEndPoint(endpoint);
 
@@ -68,6 +100,50 @@ namespace HiSuite_Proxy
                     textBox4.Text = text.Substring(0, ++where);
                 }
             };
+            checkBox4.CheckedChanged += delegate
+            {
+                if(checkBox4.Checked)
+                {
+                    File.WriteAllText("xdanoads", "1");
+                    xdaremoveads = true;
+                    proxyserver.SetAsSystemProxy(endpoint, ProxyProtocolType.AllHttp);
+                }
+                else
+                {
+                    if(File.Exists("xdanoads"))
+                    {
+                        File.Delete("xdanoads");
+                    }
+                    xdaremoveads = false;
+                    proxyserver.DisableSystemProxy(ProxyProtocolType.AllHttp);
+                }
+            };
+            if(File.Exists("xdanoads"))
+            {
+                proxyserver.SetAsSystemProxy(endpoint, ProxyProtocolType.AllHttp);
+                xdaremoveads = true;
+                checkBox4.Checked = true;
+            }
+        }
+
+        private async Task Proxyserver_BeforeResponse(object sender, Titanium.Web.Proxy.EventArguments.SessionEventArgs e)
+        {
+            if(xdaremoveads)
+            {
+                string reqeustURL = e.HttpClient.Request.Url;
+                if (reqeustURL.Contains("xda-developers.com"))
+                {
+                    string response = await e.GetResponseBodyAsString();
+                    if(response.Contains("var googletag"))
+                    {
+                        e.SetResponseBodyString(response + "\r\n" + "<script>googletag.display = function(arguments) { return true; };\r\ngoogletag.enableServices = function() { return true; };</script>");
+                    }
+                }
+                else if(reqeustURL.Contains("gpt/pubads_impl"))
+                {
+                    e.SetResponseBodyString("");
+                }
+            }                   
         }
 
         private string GetURLVersion(string url)
@@ -88,26 +164,29 @@ namespace HiSuite_Proxy
         {
             try
             {
-                this.Invoke(new Action(() =>
-                {
-                    textBox3.AppendText(e.HttpClient.Request.Url + Environment.NewLine);
-                }));
-                if (checkBox2.Checked)
-                {
-                    string debug = e.HttpClient.Request.Url + " : " + Environment.NewLine;
-                    List<HttpHeader> clientheaders = e.HttpClient.Request.Headers.GetAllHeaders();
-                    for (int i = 0, j = clientheaders.Count; i < j; i++)
-                    {
-                        debug += clientheaders[i].Name + ": " + clientheaders[i].Value + Environment.NewLine;
-                    }
-                    if (e.HttpClient.Request.HasBody)
-                    {
-                        debug += Environment.NewLine + await e.GetRequestBodyAsString();
-                    }
-                    debug += Environment.NewLine + Environment.NewLine;
-                    File.AppendAllText("logs.txt", debug);
-                }
                 string reqeustURL = e.HttpClient.Request.Url;
+                if(reqeustURL.Contains("query.hicloud.com") || reqeustURL.Contains("/TDS/data/files"))
+                {
+                    this.Invoke(new Action(() =>
+                    {
+                        textBox3.AppendText(e.HttpClient.Request.Url + Environment.NewLine);
+                    }));
+                    if (checkBox2.Checked)
+                    {
+                        string debug = e.HttpClient.Request.Url + " : " + Environment.NewLine;
+                        List<HttpHeader> clientheaders = e.HttpClient.Request.Headers.GetAllHeaders();
+                        for (int i = 0, j = clientheaders.Count; i < j; i++)
+                        {
+                            debug += clientheaders[i].Name + ": " + clientheaders[i].Value + Environment.NewLine;
+                        }
+                        if (e.HttpClient.Request.HasBody)
+                        {
+                            debug += Environment.NewLine + await e.GetRequestBodyAsString();
+                        }
+                        debug += Environment.NewLine + Environment.NewLine;
+                        File.AppendAllText("logs.txt", debug);
+                    }
+                }
                 if (reqeustURL.Contains("query.hicloud.com"))
                 {
                     if (reqeustURL.Contains("CheckNewVersion.aspx"))

@@ -79,5 +79,25 @@ namespace HiSuite_Proxy.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///&quot;IMEI&quot;: &quot;&quot;,
+        ///&quot;deviceId&quot;: &quot;227CA9D2&quot;,
+        ///&quot;updateToken&quot;: &quot;415FD779AF&quot;,
+        ///&quot;vendor&quot;: &quot;&quot;,
+        ///&quot;ver&quot;: &quot;1&quot;,
+        ///&quot;version&quot;: [
+        ///{
+        ///&quot;versionId&quot;: &quot;VersionID&quot;
+        ///}
+        ///]
+        ///}.
+        /// </summary>
+        internal static string romapprovedjson {
+            get {
+                return ResourceManager.GetString("romapprovedjson", resourceCulture);
+            }
+        }
     }
 }

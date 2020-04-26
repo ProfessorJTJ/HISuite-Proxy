@@ -1,4 +1,4 @@
-namespace HiSuite_Proxy
+﻿namespace HiSuite_Proxy
 {
     partial class Form1
     {
@@ -53,7 +53,7 @@ namespace HiSuite_Proxy
             this.label2 = new System.Windows.Forms.Label();
             this.textBox7 = new System.Windows.Forms.TextBox();
             this.radioButton4 = new System.Windows.Forms.RadioButton();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.button4 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBox1
@@ -109,7 +109,7 @@ namespace HiSuite_Proxy
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(109, 81);
+            this.label5.Location = new System.Drawing.Point(94, 81);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(29, 15);
             this.label5.TabIndex = 10;
@@ -120,7 +120,7 @@ namespace HiSuite_Proxy
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.label6.Location = new System.Drawing.Point(103, 101);
+            this.label6.Location = new System.Drawing.Point(89, 101);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(35, 13);
             this.label6.TabIndex = 8;
@@ -129,9 +129,9 @@ namespace HiSuite_Proxy
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(202, 96);
+            this.button1.Location = new System.Drawing.Point(125, 79);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(88, 23);
+            this.button1.Size = new System.Drawing.Size(88, 42);
             this.button1.TabIndex = 11;
             this.button1.Text = "Install HiSuite";
             this.button1.UseVisualStyleBackColor = true;
@@ -297,24 +297,23 @@ namespace HiSuite_Proxy
             this.radioButton4.Text = "Recovery OS";
             this.radioButton4.UseVisualStyleBackColor = true;
             // 
-            // checkBox4
+            // button4
             // 
-            this.checkBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox4.Location = new System.Drawing.Point(202, 79);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(85, 16);
-            this.checkBox4.TabIndex = 22;
-            this.checkBox4.Text = "XDA Anti ADS";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button4.Location = new System.Drawing.Point(218, 78);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(72, 43);
+            this.button4.TabIndex = 23;
+            this.button4.Text = "Advanced";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(418, 172);
-            this.Controls.Add(this.checkBox4);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.radioButton3);
             this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.checkBox1);
@@ -374,7 +373,7 @@ namespace HiSuite_Proxy
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox7;
         private System.Windows.Forms.RadioButton radioButton4;
-        private System.Windows.Forms.CheckBox checkBox4;
+        private System.Windows.Forms.Button button4;
     }
 }
 

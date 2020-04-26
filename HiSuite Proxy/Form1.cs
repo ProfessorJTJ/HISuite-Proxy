@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,53 +16,28 @@ namespace HiSuite_Proxy
     {
         ProxyServer proxyserver = new ProxyServer();
         ExplicitProxyEndPoint endpoint = new ExplicitProxyEndPoint(IPAddress.Any, 7777);
-        bool xdaremoveads = false;
-        NotifyIcon mytoolbar = new NotifyIcon();
+        public class CustomData
+        {
+            public bool CustomBase = false, CustomPreload = false, CustomCust = false, LocalBase = false, LocalPreload = false, LocalCust = false;
+            public string CustomBaseID, CustomPreloadID, CustomCustID, LocalBaseDir, LocalPreloadDir, LocalCustDir;
+        }
+        public CustomData _customData = new CustomData();
+        FirmFinder firmFinder = null;
         public Form1()
         {
             InitializeComponent();
-            mytoolbar.Visible = false;
-            mytoolbar.Text = "HISuite Proxy";
-            mytoolbar.Icon = this.Icon;
-            MenuItem item = new MenuItem();
-            item.Text = "Exit";
-            item.Click += delegate
-            {
-                mytoolbar.Visible = false;
-                this.Close();
-            };
-            MenuItem[] menuItem = { item };
+            firmFinder = new FirmFinder(this);
 
-            mytoolbar.ContextMenu = new ContextMenu(menuItem);
-            mytoolbar.DoubleClick += delegate
-            {
-                mytoolbar.Visible = false;
-                this.Show();
-                WindowState = FormWindowState.Normal;
-                this.BringToFront();
-                this.Focus();
-            };
             this.FormClosing += delegate
             {
                 try
                 {
-                    mytoolbar.Visible = false;
-                    mytoolbar.Dispose();
-                    proxyserver.DisableSystemProxy(ProxyProtocolType.AllHttp);
                     proxyserver.Stop();
+                    Environment.Exit(Environment.ExitCode);
                 }
                 catch
                 {
 
-                }
-            };
-            this.Resize += delegate
-            {
-                if(WindowState == FormWindowState.Minimized)
-                {
-                    mytoolbar.Visible = true;
-
-                    this.Hide();
                 }
             };
             try
@@ -78,12 +53,12 @@ namespace HiSuite_Proxy
 
                 proxyserver.Start();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 textBox3.AppendText(ex.StackTrace);
                 MessageBox.Show(ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
             textBox3.ScrollBars = ScrollBars.Both;
             textBox3.Visible = false;
             textBox1.TextChanged += delegate
@@ -104,50 +79,66 @@ namespace HiSuite_Proxy
                     textBox4.Text = text.Substring(0, ++where);
                 }
             };
-            checkBox4.CheckedChanged += delegate
-            {
-                if(checkBox4.Checked)
-                {
-                    File.WriteAllText("xdanoads", "1");
-                    xdaremoveads = true;
-                    proxyserver.SetAsSystemProxy(endpoint, ProxyProtocolType.AllHttp);
-                }
-                else
-                {
-                    if(File.Exists("xdanoads"))
-                    {
-                        File.Delete("xdanoads");
-                    }
-                    xdaremoveads = false;
-                    proxyserver.DisableSystemProxy(ProxyProtocolType.AllHttp);
-                }
-            };
-            if(File.Exists("xdanoads"))
-            {
-                proxyserver.SetAsSystemProxy(endpoint, ProxyProtocolType.AllHttp);
-                xdaremoveads = true;
-                checkBox4.Checked = true;
-            }
         }
 
         private async Task Proxyserver_BeforeResponse(object sender, Titanium.Web.Proxy.EventArguments.SessionEventArgs e)
         {
-            if(xdaremoveads)
+            string reqeustURL = e.HttpClient.Request.Url;
+            if (reqeustURL.Contains("filelist.xml"))
             {
-                string reqeustURL = e.HttpClient.Request.Url;
-                if (reqeustURL.Contains("xda-developers.com"))
+
+                string basefirm = textBox1.Text, custfirm = textBox7.Text, preloadfirm = textBox4.Text;
+                basefirm = basefirm.Substring(basefirm.IndexOf("TDS"));
+                custfirm = custfirm.Substring(custfirm.IndexOf("TDS"));
+                preloadfirm = preloadfirm.Substring(preloadfirm.IndexOf("TDS"));
+
+                string tempurl = reqeustURL.Substring(reqeustURL.IndexOf("TDS"));
+                if (_customData.LocalBase && tempurl.Contains(basefirm))
                 {
                     string response = await e.GetResponseBodyAsString();
-                    if(response.Contains("var googletag"))
+                    int where = response.IndexOf("package=");
+                    if (where == -1)
                     {
-                        e.SetResponseBodyString(response + "\r\n" + "<script>googletag.display = function(arguments) { return true; };\r\ngoogletag.enableServices = function() { return true; };</script>");
+                        MessageBox.Show("Couldn't load base package name, please contact developer if error continues", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        where += 9;
+                        int finish = response.IndexOf('"', where);
+                        CopyFile(textBox2.Text, _customData.LocalBaseDir, response.Substring(where, finish - where), 0);
                     }
                 }
-                else if(reqeustURL.Contains("gpt/pubads_impl"))
+                else if (_customData.LocalCust && tempurl.Contains(custfirm))
                 {
-                    e.SetResponseBodyString("");
+                    string response = await e.GetResponseBodyAsString();
+                    int where = response.IndexOf("package=");
+                    if (where == -1)
+                    {
+                        MessageBox.Show("Couldn't load cust package name, please contact developer if error continues", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        where += 9;
+                        int finish = response.IndexOf('"', where);
+                        CopyFile(textBox6.Text, _customData.LocalCustDir, response.Substring(where, finish - where), 1);
+                    }
                 }
-            }                   
+                else if (_customData.LocalPreload && tempurl.Contains(preloadfirm))
+                {
+                    string response = await e.GetResponseBodyAsString();
+                    int where = response.IndexOf("package=");
+                    if (where == -1)
+                    {
+                        MessageBox.Show("Couldn't load preload package name, please contact developer if error continues", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        where += 9;
+                        int finish = response.IndexOf('"', where);
+                        CopyFile(textBox5.Text, _customData.LocalPreloadDir, response.Substring(where, finish - where), 2);
+                    }
+                }
+            }
         }
 
         private string GetURLVersion(string url)
@@ -255,7 +246,14 @@ namespace HiSuite_Proxy
                                 if(GetURLVersion(textBox1.Text) != "Unknown")
                                 {
                                     responsedata = responsedata.Replace("hasfullpackage", "0");
-                                    responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text));
+                                    if(_customData.CustomBase)
+                                    {
+                                        responsedata = responsedata.Replace("WriteVerionID", _customData.CustomBaseID);
+                                    }
+                                    else
+                                    {
+                                        responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text));
+                                    }
                                     responsedata = responsedata.Replace("VersionURL", textBox1.Text);
                                     responsedata = responsedata.Replace("Unknown1", textBox2.Text);
                                 }
@@ -266,7 +264,14 @@ namespace HiSuite_Proxy
 
                                 if (checkBox1.Checked)
                                 {
-                                    responsedata = responsedata.Replace("WiteVerionID", GetURLVersion(textBox4.Text));
+                                    if(_customData.CustomPreload)
+                                    {
+                                        responsedata = responsedata.Replace("WiteVerionID", _customData.CustomPreloadID);
+                                    }
+                                    else
+                                    {
+                                        responsedata = responsedata.Replace("WiteVerionID", GetURLVersion(textBox4.Text));
+                                    }
                                     responsedata = responsedata.Replace("VrsionURL", textBox4.Text);
                                     responsedata = responsedata.Replace("Unknown2", textBox5.Text);
                                     responsedata = responsedata.Replace("hasreloadedpackage", "0");
@@ -278,7 +283,14 @@ namespace HiSuite_Proxy
 
                                 if (checkBox3.Checked)
                                 {
-                                    responsedata = responsedata.Replace("WteVerionID", GetURLVersion(textBox7.Text));
+                                    if(_customData.CustomCust)
+                                    {
+                                        responsedata = responsedata.Replace("WteVerionID", _customData.CustomCustID);
+                                    }
+                                    else
+                                    {
+                                        responsedata = responsedata.Replace("WteVerionID", GetURLVersion(textBox7.Text));
+                                    }
                                     responsedata = responsedata.Replace("VrionURL", textBox7.Text);
                                     responsedata = responsedata.Replace("Unknown3", textBox6.Text);
                                     responsedata = responsedata.Replace("hascustpackage", "0");
@@ -301,6 +313,7 @@ namespace HiSuite_Proxy
                         }
                     }
                 }
+                
             }
             catch(Exception ex)
             {
@@ -386,6 +399,133 @@ namespace HiSuite_Proxy
             else
             {
                 return false;
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if(!firmFinder.Visible)
+            {
+                firmFinder.Show(this);
+                firmFinder.BringToFront();
+                firmFinder.Focus();
+            }          
+        }
+        private bool CopyingBase = false, CopyingCust = false, CopyingPreload = false;
+        private void CopyFile(string romname, string filename, string packagename, int filekind)
+        {
+            if (filekind == 0)
+            {
+                if (CopyingBase)
+                    return;
+                CopyingBase = true;
+            }
+            else if (filekind == 1)
+            {
+                if (CopyingCust)
+                    return;
+                CopyingCust = true;
+            }
+            else if (filekind == 2)
+            {
+                if (CopyingPreload)
+                    return;
+                CopyingPreload = true;
+            }
+            new Thread(() =>
+            {
+                Progress progress = new Progress("Copying File For " + romname);
+                bool finished = false;
+                Thread CopyThread = new Thread(() =>
+                {
+                    CopyItPlease(progress, romname, filename, packagename);
+                    finished = true;
+                    if(progress.Visible)
+                    {
+                        progress.Close();
+                    }
+                    else
+                    {
+                        progress.Load += delegate
+                        {
+                            progress.Close();
+                        };
+                    }
+                });
+                progress.FormClosing += delegate
+                {
+                    if (filekind == 0)
+                    {
+                        CopyingBase = false;
+                    }
+                    else if (filekind == 1)
+                    {
+                        CopyingCust = false;
+                    }
+                    else if (filekind == 2)
+                    {
+                        CopyingPreload = false;
+                    }
+                    if (!finished)
+                    {
+                        CopyThread.Abort();
+                    }
+                };
+                CopyThread.Start();
+                progress.ShowDialog(this);
+            }).Start();
+        }
+        private void CopyItPlease(Progress progress, string romname, string filename, string packagename)
+        {
+            try
+            {
+                string dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\HiSuite\ROM\" + romname + @"\full\" + packagename;
+                
+                if(File.Exists(dir))
+                {
+                    long victimlen = new FileInfo(dir).Length, mainfilelen = new FileInfo(filename).Length;
+                    if(victimlen != mainfilelen)
+                    {
+                        File.Delete(dir);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                string Directoryname = Path.GetDirectoryName(dir);
+                if(!Directory.Exists(Directoryname))
+                {
+                    Directory.CreateDirectory(Directoryname);
+                }
+                using (FileStream stream = File.OpenRead(filename))
+                {
+                    long totallen = stream.Length;
+                    using(FileStream write = File.OpenWrite(dir))
+                    {
+                        long writtenlen = 0;
+                        int readdata = 4096;
+                        byte[] data = new byte[readdata];
+                        while((readdata = stream.Read(data, 0, data.Length)) > 0)
+                        {
+                            write.Write(data, 0, readdata);
+                            writtenlen += readdata;
+                            int percentage = (int)((writtenlen * 100) / totallen);
+                            if((percentage % 5) == 0)
+                            {
+                                this.Invoke(new Action(() =>
+                                {
+                                    progress.SetProgress(percentage);
+                                }));
+                            }
+                        }
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                if(!e.Message.StartsWith("Thread was being"))
+                MessageBox.Show(e.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +27,8 @@ namespace HiSuite_Proxy
         {
             InitializeComponent();
             firmFinder = new FirmFinder(this);
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
             this.FormClosing += delegate
             {
@@ -321,6 +323,7 @@ namespace HiSuite_Proxy
                 {
                     textBox3.AppendText(ex.StackTrace + Environment.NewLine);
                 }));
+                MessageBox.Show(ex.StackTrace, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private Task Proxyserver_ServerCertificateValidationCallback(object sender, Titanium.Web.Proxy.EventArguments.CertificateValidationEventArgs e)

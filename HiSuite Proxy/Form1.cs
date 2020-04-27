@@ -28,6 +28,8 @@ namespace HiSuite_Proxy
             InitializeComponent();
             firmFinder = new FirmFinder(this);
 
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
             this.FormClosing += delegate
             {
                 try
@@ -204,7 +206,7 @@ namespace HiSuite_Proxy
                             }).Start();
                         }
                     }
-                    /*else if (reqeustURL.Contains("authorize.action"))
+                    else if (reqeustURL.Contains("authorize.action"))
                     {
                         WebClient client = new WebClient();
                         client.Headers.Set(HttpRequestHeader.Accept, "* /*");
@@ -217,7 +219,7 @@ namespace HiSuite_Proxy
                         Headers.Add("Server", new HttpHeader("Server", "elb"));
                         Headers.Add("X-XSS-Protection", new HttpHeader("X-XSS-Protection", "1; mode=block"));
                         e.Ok(respons, Headers);
-                    }*/
+                    }
                     else if (e.HttpClient.Request.HasBody)
                     {
                         string bodydata = await e.GetRequestBodyAsString();

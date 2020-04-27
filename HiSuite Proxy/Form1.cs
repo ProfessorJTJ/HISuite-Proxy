@@ -28,8 +28,6 @@ namespace HiSuite_Proxy
             InitializeComponent();
             firmFinder = new FirmFinder(this);
 
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-
             this.FormClosing += delegate
             {
                 try
@@ -58,7 +56,7 @@ namespace HiSuite_Proxy
             catch (Exception ex)
             {
                 textBox3.AppendText(ex.StackTrace);
-                MessageBox.Show(ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show(ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             textBox3.ScrollBars = ScrollBars.Both;
@@ -206,10 +204,10 @@ namespace HiSuite_Proxy
                             }).Start();
                         }
                     }
-                    else if (reqeustURL.Contains("authorize.action"))
+                    /*else if (reqeustURL.Contains("authorize.action"))
                     {
                         WebClient client = new WebClient();
-                        client.Headers.Set(HttpRequestHeader.Accept, "*/*");
+                        client.Headers.Set(HttpRequestHeader.Accept, "* /*");
                         client.Headers.Set(HttpRequestHeader.ContentType, "application/json;charset=UTF-8");
                         string updata = await e.GetRequestBodyAsString();
                         string respons = client.UploadString("https://query.hicloud.com:443/sp_ard_common/v1/authorize.action", updata);
@@ -219,7 +217,7 @@ namespace HiSuite_Proxy
                         Headers.Add("Server", new HttpHeader("Server", "elb"));
                         Headers.Add("X-XSS-Protection", new HttpHeader("X-XSS-Protection", "1; mode=block"));
                         e.Ok(respons, Headers);
-                    }
+                    }*/
                     else if (e.HttpClient.Request.HasBody)
                     {
                         string bodydata = await e.GetRequestBodyAsString();
@@ -323,7 +321,7 @@ namespace HiSuite_Proxy
                 {
                     textBox3.AppendText(ex.StackTrace + Environment.NewLine);
                 }));
-                MessageBox.Show(ex.StackTrace, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private Task Proxyserver_ServerCertificateValidationCallback(object sender, Titanium.Web.Proxy.EventArguments.CertificateValidationEventArgs e)

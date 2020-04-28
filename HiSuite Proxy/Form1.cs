@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +9,7 @@ using System.Threading;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Security;
 
 namespace HiSuite_Proxy
 {
@@ -29,6 +30,7 @@ namespace HiSuite_Proxy
             firmFinder = new FirmFinder(this);
 
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(delegate { return true; });
 
             this.FormClosing += delegate
             {
@@ -209,7 +211,7 @@ namespace HiSuite_Proxy
                     else if (reqeustURL.Contains("authorize.action"))
                     {
                         WebClient client = new WebClient();
-                        client.Headers.Set(HttpRequestHeader.Accept, "* /*");
+                        client.Headers.Set(HttpRequestHeader.Accept, "*/*");
                         client.Headers.Set(HttpRequestHeader.ContentType, "application/json;charset=UTF-8");
                         string updata = await e.GetRequestBodyAsString();
                         string respons = client.UploadString("https://query.hicloud.com:443/sp_ard_common/v1/authorize.action", updata);

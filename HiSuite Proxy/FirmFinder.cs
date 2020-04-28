@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using MaterialSkin.Controls;
 using System.Net;
 using System.Threading;
+using System.Net.Security;
 
 namespace HiSuite_Proxy
 {
@@ -227,29 +228,6 @@ namespace HiSuite_Proxy
                     materialRadioButton1.Text = "ERROR";
                 }));
                 MessageBox.Show(e.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-
-
-        public class gZipWebClient : WebClient
-        {
-            private int Timeout = 45000;
-            public bool Keepalive = false;
-            public void SetTimeout(int timeout)
-            {
-                Timeout = timeout;
-            }
-            protected override WebRequest GetWebRequest(Uri address)
-            {
-                HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
-                request.Timeout = Timeout;
-                request.ReadWriteTimeout = Timeout;
-                request.KeepAlive = Keepalive;
-                request.AllowAutoRedirect = false;
-                request.ProtocolVersion = new Version("1.1");
-                request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                return request;
             }
         }
 

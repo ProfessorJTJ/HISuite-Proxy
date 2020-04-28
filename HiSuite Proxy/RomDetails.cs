@@ -155,7 +155,7 @@ namespace HiSuite_Proxy
             {
                 throw new Exception("Couldn't connect to huawei servers");
             }
-            SslStream stream = new SslStream(client.GetStream());
+            SslStream stream = new SslStream(client.GetStream(), false, new RemoteCertificateValidationCallback(delegate { return true; }));
             if(!stream.BeginAuthenticateAsClient("query.hicloud.com", null, SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12, false, null, null).AsyncWaitHandle.WaitOne(5000))
             {
                 try

@@ -268,6 +268,12 @@ namespace HiSuite_Proxy
                                     {
                                         responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text));
                                     }
+                                    if(checkBox4.Checked)
+                                        responsedata = responsedata.Replace("pointbase", "1");
+                                    else
+                                        responsedata = responsedata.Replace("pointbase", "0");
+
+                                    responsedata = responsedata.Replace("basetype", textBox8.Text);
                                     responsedata = responsedata.Replace("VersionURL", textBox1.Text);
                                     responsedata = responsedata.Replace("Unknown1", textBox2.Text);
                                 }
@@ -286,6 +292,10 @@ namespace HiSuite_Proxy
                                     {
                                         responsedata = responsedata.Replace("WiteVerionID", GetURLVersion(textBox4.Text));
                                     }
+                                    if (checkBox6.Checked)
+                                        responsedata = responsedata.Replace("pointpreload", "1");
+                                    else
+                                        responsedata = responsedata.Replace("pointpreload", "0");
                                     responsedata = responsedata.Replace("VrsionURL", textBox4.Text);
                                     responsedata = responsedata.Replace("Unknown2", textBox5.Text);
                                     responsedata = responsedata.Replace("hasreloadedpackage", "0");
@@ -305,6 +315,10 @@ namespace HiSuite_Proxy
                                     {
                                         responsedata = responsedata.Replace("WteVerionID", GetURLVersion(textBox7.Text));
                                     }
+                                    if (checkBox5.Checked)
+                                        responsedata = responsedata.Replace("pointcust", "1");
+                                    else
+                                        responsedata = responsedata.Replace("pointcust", "0");
                                     responsedata = responsedata.Replace("VrionURL", textBox7.Text);
                                     responsedata = responsedata.Replace("Unknown3", textBox6.Text);
                                     responsedata = responsedata.Replace("hascustpackage", "0");
@@ -346,9 +360,9 @@ namespace HiSuite_Proxy
 
         private void button3_Click(object sender, EventArgs e)
         {
-            this.Size = new System.Drawing.Size(430, 450);
+            this.Size = new System.Drawing.Size(Width, Width - 50);
             textBox3.Location = new System.Drawing.Point(10, 168);
-            textBox3.Size = new System.Drawing.Size(400, 237);
+            textBox3.Size = new System.Drawing.Size(Width - 30, Width - 263);
             textBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
             textBox3.Visible = true;
         }
@@ -427,6 +441,12 @@ namespace HiSuite_Proxy
             }          
         }
         private bool CopyingBase = false, CopyingCust = false, CopyingPreload = false;
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=fullclip39@gmail.com&item_name=HISuite+Proxy+Support&no_shipping=1&lc=US");
+        }
+
         private void CopyFile(string romname, string filename, string packagename, int filekind)
         {
             if (filekind == 0)

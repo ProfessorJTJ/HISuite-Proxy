@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -81,6 +81,16 @@ namespace HiSuite_Proxy
                 if (where != -1)
                 {
                     textBox4.Text = text.Substring(0, ++where);
+                }
+            };
+
+            textBox7.TextChanged += delegate
+            {
+                string text = textBox7.Text;
+                int where = text.IndexOf("/full");
+                if (where != -1)
+                {
+                    textBox7.Text = text.Substring(0, ++where);
                 }
             };
         }

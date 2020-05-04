@@ -257,7 +257,8 @@ namespace HiSuite_Proxy
                             if (pacakgetype == opscheck)
                             {
                                 string responsedata = Encoding.UTF8.GetString(Properties.Resources.responsedata).Replace("\r\n", "");
-                                if(GetURLVersion(textBox1.Text) != "Unknown")
+                                bool Iveabase = (GetURLVersion(textBox1.Text) != "Unknown");
+                                if (Iveabase)
                                 {
                                     responsedata = responsedata.Replace("hasfullpackage", "0");
                                     if(_customData.CustomBase)
@@ -293,7 +294,16 @@ namespace HiSuite_Proxy
                                         responsedata = responsedata.Replace("WiteVerionID", GetURLVersion(textBox4.Text));
                                     }
                                     if (checkBox6.Checked)
-                                        responsedata = responsedata.Replace("pointpreload", "1");
+                                    {
+                                        if(Iveabase)
+                                        {
+                                            responsedata = responsedata.Replace("pointpreload", "2");
+                                        }
+                                        else
+                                        {
+                                            responsedata = responsedata.Replace("pointpreload", "1");
+                                        }
+                                    }
                                     else
                                         responsedata = responsedata.Replace("pointpreload", "0");
                                     responsedata = responsedata.Replace("VrsionURL", textBox4.Text);
@@ -316,7 +326,16 @@ namespace HiSuite_Proxy
                                         responsedata = responsedata.Replace("WteVerionID", GetURLVersion(textBox7.Text));
                                     }
                                     if (checkBox5.Checked)
-                                        responsedata = responsedata.Replace("pointcust", "1");
+                                    {
+                                        if (Iveabase)
+                                        {
+                                            responsedata = responsedata.Replace("pointcust", "2");
+                                        }
+                                        else
+                                        {
+                                            responsedata = responsedata.Replace("pointcust", "1");
+                                        }
+                                    }  
                                     else
                                         responsedata = responsedata.Replace("pointcust", "0");
                                     responsedata = responsedata.Replace("VrionURL", textBox7.Text);

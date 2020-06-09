@@ -10,6 +10,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Security;
+using System.Security.Permissions;
 
 namespace HiSuite_Proxy
 {
@@ -24,8 +25,15 @@ namespace HiSuite_Proxy
         }
         public CustomData _customData = new CustomData();
         FirmFinder firmFinder = null;
-        public Form1()
+        public Form1(string[] arguments)
         {
+            if(arguments.Length > 0 && arguments.Length == 2)
+            {
+                ReplaceHTTPComponent(arguments[0], arguments[1]);
+                Environment.Exit(Environment.ExitCode);
+                return;
+            }
+
             InitializeComponent();
             firmFinder = new FirmFinder(this);
 
@@ -221,7 +229,7 @@ namespace HiSuite_Proxy
                     else if (reqeustURL.Contains("authorize.action"))
                     {
                         WebClient client = new WebClient();
-                        client.Headers.Set(HttpRequestHeader.Accept, "*/*");
+                        client.Headers.Set(HttpRequestHeader.Accept, "* /*");
                         client.Headers.Set(HttpRequestHeader.ContentType, "application/json;charset=UTF-8");
                         string updata = await e.GetRequestBodyAsString();
                         string respons = client.UploadString("https://query.hicloud.com:443/sp_ard_common/v1/authorize.action", updata);
@@ -232,8 +240,7 @@ namespace HiSuite_Proxy
                         Headers.Add("X-XSS-Protection", new HttpHeader("X-XSS-Protection", "1; mode=block"));
                         Headers.Add("X-frame-options", new HttpHeader("X-frame-options", "SAMEORIGIN"));
                         Headers.Add("X-Content-Type-Options", new HttpHeader("X-Content-Type-Options", "nosniff"));
-                        string manipulatedresponse = ManipulateData(respons);
-                        e.Ok(manipulatedresponse, Headers);
+                        e.Ok(respons, Headers);
                     }
                     else if (e.HttpClient.Request.HasBody)
                     {
@@ -391,12 +398,26 @@ namespace HiSuite_Proxy
 
         private void button1_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "Executable File|*.exe";
-            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + @"\HiSuite";
-            if (dialog.ShowDialog() == DialogResult.OK)
+            Process.Start("https://consumer.huawei.com/en/support/hisuite/");
+        }
+
+        public void ReplaceHTTPComponent(string rawfile, string patchedfile)
+        {
+            Process[] hisuiteopen = Process.GetProcessesByName("HiSuite");
+            if(hisuiteopen.Length > 0)
             {
-                PatchHISuite(dialog.FileName);
+                hisuiteopen[0].Kill();
+                Thread.Sleep(1500);
+            }
+            try
+            {
+                File.Move(rawfile, rawfile.Replace(".dll", ".bak"));
+                File.WriteAllText(rawfile, File.ReadAllText(patchedfile, Encoding.Default), Encoding.Default);
+                MessageBox.Show("Successfully Patched!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
             }
         }
 
@@ -410,67 +431,27 @@ namespace HiSuite_Proxy
                 Patch(dialog.FileName);
             }
         }
-        private void PatchHISuite(string filename)
-        {
-            string filedata = File.ReadAllText(filename, Encoding.Default);
-
-            bool succeeed = false;
-            succeeed = PatcherReplace(new byte[] { 0xE8, 0xC9, 0x4D, 0xD8, 0xFF, 0x85, 0xC0, 0x0F, 0x84, 0xB1, 0x00, 0x00, 0x00 }, new byte[] { 0xE8, 0xC9, 0x4D, 0xD8, 0xFF, 0x85, 0xC0, 0x0F, 0x85, 0xB1, 0x00, 0x00, 0x00 }, ref filedata);
-            if(!succeeed)
-            {
-                succeeed = PatcherReplace(new byte[] { 0xE8, 0xB9, 0x3B, 0xD8, 0xFF, 0x85, 0xC0, 0x0F, 0x84, 0xB1, 0x00, 0x00, 0x00 }, new byte[] { 0xE8, 0xB9, 0x3B, 0xD8, 0xFF, 0x85, 0xC0, 0x0F, 0x85, 0xB1, 0x00, 0x00, 0x00 }, ref filedata);
-            }
-            if (succeeed)
-            {
-                SaveFileDialog dialog = new SaveFileDialog();
-                dialog.Filter = "Executable File|*.exe";
-                dialog.FileName = "HISuite2.exe";
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    try
-                    {
-                        File.WriteAllText(dialog.FileName, filedata, Encoding.Default);
-                        MessageBox.Show("Successfully Patched!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show(e.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("This file is already patched.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
         private void Patch(string filename)
         {
             string filedata = File.ReadAllText(filename, Encoding.Default);
 
             if (PatcherReplace(new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0x51, 0xFF, 0x15, 0xC4, 0x32, 0x01, 0x10 }, new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0x51, 0xFF, 0x15, 0xC4, 0x32, 0x01, 0x10 }, ref filedata))
             {
-                    if (PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, new byte[] { 0x70, 0x70, 0x70, 0x70, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, ref filedata))
-                    {
-                        SaveFileDialog dialog = new SaveFileDialog();
-                        dialog.Filter = "Dynamic-link library|*.dll";
-                        dialog.FileName = "httpcomponent.dll";
-                        if (dialog.ShowDialog() == DialogResult.OK)
-                        {
-                            try
-                            {
-                                File.WriteAllText(dialog.FileName, filedata, Encoding.Default);
-                                MessageBox.Show("Successfully Patched!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                            catch(Exception e)
-                            {
-                                MessageBox.Show(e.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Some errors occured in the patching process!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                if (PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, new byte[] { 0x70, 0x70, 0x70, 0x70, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, ref filedata))
+                {
+
+                    string tempfile = Path.GetTempPath() + "httpcomponent.dll"; 
+                    File.WriteAllText(tempfile, filedata, Encoding.Default);
+                    Process startprogram = new Process();
+                    startprogram.StartInfo.FileName = Process.GetCurrentProcess().MainModule.FileName;
+                    startprogram.StartInfo.Arguments = "\"" + filename + "\" \"" + tempfile + "\"";
+                    startprogram.StartInfo.Verb = "runas";
+                    startprogram.Start();
+                }
+                else
+                {
+                    MessageBox.Show("Some errors occured in the patching process!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             else
             {
@@ -504,7 +485,7 @@ namespace HiSuite_Proxy
 
         private void button5_Click(object sender, EventArgs e)
         {
-            Process.Start("https://consumer.huawei.com/en/support/hisuite/");
+            Process.Start("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=fullclip39@gmail.com&item_name=HISuite+Proxy+Support&no_shipping=1&lc=US");
         }
 
         private void CopyFile(string romname, string filename, string packagename, int filekind)
@@ -533,7 +514,7 @@ namespace HiSuite_Proxy
                 bool finished = false;
                 Thread CopyThread = new Thread(() =>
                 {
-                    CopyItPlease(progress, romname, filename, packagename);
+                    CopyItPlease(filekind, progress, romname, filename, packagename);
                     finished = true;
                     if(progress.Visible)
                     {
@@ -570,7 +551,7 @@ namespace HiSuite_Proxy
                 progress.ShowDialog(this);
             }).Start();
         }
-        private void CopyItPlease(Progress progress, string romname, string filename, string packagename)
+        private void CopyItPlease(int FileKind, Progress progress, string romname, string filename, string packagename)
         {
             try
             {
@@ -592,6 +573,23 @@ namespace HiSuite_Proxy
                 if(!Directory.Exists(Directoryname))
                 {
                     Directory.CreateDirectory(Directoryname);
+                }
+                if(FileKind > 0)
+                {
+                    if(FileKind == 1)
+                    {
+                        while(CopyingBase)
+                        {
+                            Thread.Sleep(1500);
+                        }
+                    }
+                    else
+                    {
+                        while (CopyingBase || CopyingCust)
+                        {
+                            Thread.Sleep(1500);
+                        }
+                    }
                 }
                 using (FileStream stream = File.OpenRead(filename))
                 {
@@ -622,50 +620,6 @@ namespace HiSuite_Proxy
                 if(!e.Message.StartsWith("Thread was being"))
                 MessageBox.Show(e.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        public string ManipulateData(string response)
-        {
-            int where = response.IndexOf("data=");
-            where += 5;
-            int finish = response.IndexOf("&", where);
-            string find = response.Substring(where, finish - where);
-
-            string data = Encoding.UTF8.GetString(Convert.FromBase64String(find));
-
-            int whereisit = 0;
-            while((whereisit = data.IndexOf("versionId", whereisit)) != -1)
-            {
-                whereisit += 12;
-                int finishez = data.IndexOf('"', whereisit);
-                string versionID = data.Substring(whereisit, finishez - whereisit);
-                whereisit = finishez + 12;
-                if(data[whereisit] != '0')
-                {
-                    whereisit += 2;
-
-                    string baseversion = GetURLVersion(textBox1.Text),
-                        preloadversion = GetURLVersion(textBox4.Text)
-                    ;
-                    if(baseversion == versionID)
-                    {
-                        data = data.Insert(whereisit, ",\"versionNumber\":\"" + textBox2.Text + "\"");
-                    }
-                    else if(preloadversion == versionID)
-                    {
-                        data = data.Insert(whereisit, ",\"versionNumber\":\"" + textBox5.Text + "\"");
-                    }
-                    else
-                    {
-                        data = data.Insert(whereisit, ",\"versionNumber\":\"" + textBox6.Text + "\"");
-                    }
-                }
-            }
-            data = data.Replace("status\":\"1", "status\":\"0").Replace("status\":\"2", "status\":\"0");
-
-            response = response.Remove(where, finish - where);
-            response = response.Insert(where, Convert.ToBase64String(Encoding.UTF8.GetBytes(data)));
-            return response;
         }
     }
 }

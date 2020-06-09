@@ -141,7 +141,7 @@ namespace HiSuite_Proxy
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(88, 37);
             this.button1.TabIndex = 11;
-            this.button1.Text = "Patch HiSuite";
+            this.button1.Text = "Install HiSuite";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -383,7 +383,7 @@ namespace HiSuite_Proxy
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(101, 23);
             this.button5.TabIndex = 28;
-            this.button5.Text = "Get HISuite";
+            this.button5.Text = "Donate";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
@@ -469,3 +469,4 @@ namespace HiSuite_Proxy
         private System.Windows.Forms.Button button5;
     }
 }
+

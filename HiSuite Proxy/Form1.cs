@@ -10,7 +10,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Security;
-using System.Security.Permissions;
 
 namespace HiSuite_Proxy
 {
@@ -412,7 +411,7 @@ namespace HiSuite_Proxy
             try
             {
                 File.Move(rawfile, rawfile.Replace(".dll", ".bak"));
-                File.WriteAllText(rawfile, File.ReadAllText(patchedfile, Encoding.Default), Encoding.Default);
+                File.WriteAllBytes(rawfile, File.ReadAllBytes(patchedfile));
                 MessageBox.Show("Successfully Patched!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch(Exception e)
@@ -433,7 +432,7 @@ namespace HiSuite_Proxy
         }
         private void Patch(string filename)
         {
-            string filedata = File.ReadAllText(filename, Encoding.Default);
+            byte[] filedata = File.ReadAllBytes(filename);
 
             if (PatcherReplace(new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0x51, 0xFF, 0x15, 0xC4, 0x32, 0x01, 0x10 }, new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0x51, 0xFF, 0x15, 0xC4, 0x32, 0x01, 0x10 }, ref filedata))
             {
@@ -441,7 +440,7 @@ namespace HiSuite_Proxy
                 {
 
                     string tempfile = Path.GetTempPath() + "httpcomponent.dll"; 
-                    File.WriteAllText(tempfile, filedata, Encoding.Default);
+                    File.WriteAllBytes(tempfile, filedata);
                     Process startprogram = new Process();
                     startprogram.StartInfo.FileName = Process.GetCurrentProcess().MainModule.FileName;
                     startprogram.StartInfo.Arguments = "\"" + filename + "\" \"" + tempfile + "\"";
@@ -458,20 +457,47 @@ namespace HiSuite_Proxy
                 MessageBox.Show("This file is already patched.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-        private bool PatcherReplace(byte[] data, byte[] replacewith, ref string basedata)
+        private bool PatcherReplace(byte[] data, byte[] replacewith, ref byte[] basedata)
         {
-            string finddata = Encoding.Default.GetString(data);
-            if (basedata.Contains(finddata))
-            {
-                basedata = basedata.Replace(finddata, Encoding.Default.GetString(replacewith));
-                return true;
-            }
-            else
+            int dataindex = FindArray(basedata, data);
+            if(dataindex == -1)
             {
                 return false;
             }
+            else
+            {
+                for(int i = 0, j = replacewith.Length; i < j; i++)
+                {
+                    basedata[dataindex + i] = replacewith[i];
+                }
+                return true;
+            }
         }
-
+        private int FindArray(byte[] basedata, byte[] searchdata)
+        {
+            int b = searchdata.Length;
+            for (int i = 0, j = basedata.Length; i < j; i++)
+            {
+                if(b > (j - i))
+                {
+                    break;
+                }
+                bool succeed = true;
+                for(int a = 0; a < b; a++)
+                {
+                    if(basedata[i + a] != searchdata[a])
+                    {
+                        succeed = false;
+                        break;
+                    }
+                }
+                if(succeed)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
         private void button4_Click(object sender, EventArgs e)
         {
             if(!firmFinder.Visible)

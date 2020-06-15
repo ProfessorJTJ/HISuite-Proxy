@@ -208,7 +208,7 @@ namespace HiSuite_Proxy
                 {
                     if (details.ApprovedForInstall)
                     {
-                        materialRadioButton1.Text = "Approved for installation";
+                        materialRadioButton1.Text = "Approved for installation - " + details.FirmName;
                         materialRadioButton1.Enabled = true;
                         materialRadioButton1.Checked = true;
                     }

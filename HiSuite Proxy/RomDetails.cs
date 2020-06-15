@@ -18,8 +18,10 @@ namespace HiSuite_Proxy
         public class RomDetailsClass
         {
             public bool ApprovedForInstall = false;
+            public string FirmName;
             public string[] SupportedVersions = { };
         }
+        public static string StaticFirmName;
         private static string GetVersionID(string url)
         {
             int where = url.IndexOf("/v");
@@ -72,11 +74,18 @@ namespace HiSuite_Proxy
                 form.SetProgress(value, text);
             }));
         }
-        public static void GetFirmwareDetails(FirmFinder form, string url, ref RomDetails.RomDetailsClass romDetails, int DetailsKind)
+        public static void GetFirmwareDetails(FirmFinder form, string url, ref RomDetailsClass romDetails, int DetailsKind)
         {
             string VersionID = GetVersionID(url);
             if(DetailsKind == 0 || DetailsKind == 2)
+            {
                 romDetails.ApprovedForInstall = ApprovedForInstallation(VersionID);
+                if (romDetails.ApprovedForInstall)
+                {
+                    romDetails.FirmName = StaticFirmName;
+                }
+            }
+                
 
             if (DetailsKind == 0)
                 return;
@@ -241,10 +250,28 @@ namespace HiSuite_Proxy
                 base64response = Encoding.UTF8.GetString(Convert.FromBase64String(base64response));
                 if (base64response.Contains("\"status\":\"0\""))
                 {
+                    where = base64response.IndexOf("versionNumber");
+                    if(where != -1)
+                    {
+                        where += 14;
+                        where = base64response.IndexOf('"', where);
+                        where++;
+                        finish = base64response.IndexOf('"', where);
+                        StaticFirmName = base64response.Substring(where, finish - where);
+                    }
+                    else
+                    {
+                        StaticFirmName = "";
+                    }
                     return true;
                 }
                 else
                 {
+                    if (base64response.Contains("versionNumber"))
+                    {
+                        MessageBox.Show("Weird, but might be approved.");
+                        return true;
+                    }
                     return false;
                 }
             }

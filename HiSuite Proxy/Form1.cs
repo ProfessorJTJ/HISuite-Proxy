@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +15,7 @@ namespace HiSuite_Proxy
 {
     public partial class Form1 : Form
     {
-        ProxyServer proxyserver = new ProxyServer();
+        ProxyServer proxyserver = new ProxyServer();      
         ExplicitProxyEndPoint endpoint = new ExplicitProxyEndPoint(IPAddress.Any, 7777);
         public class CustomData
         {
@@ -30,6 +30,16 @@ namespace HiSuite_Proxy
             {
                 ReplaceHTTPComponent(arguments[0], arguments[1]);
                 Environment.Exit(Environment.ExitCode);
+                return;
+            }
+            else if(arguments.Length == 1 && arguments[0] == "SETUP")
+            {
+                SetUP setUP = new SetUP(this);
+                setUP.ShowDialog();
+                this.Load += delegate
+                {
+                    this.Close();
+                };
                 return;
             }
 
@@ -107,7 +117,6 @@ namespace HiSuite_Proxy
             string reqeustURL = e.HttpClient.Request.Url;
             if (reqeustURL.Contains("filelist.xml"))
             {
-
                 string basefirm = textBox1.Text, custfirm = textBox7.Text, preloadfirm = textBox4.Text;
                 basefirm = basefirm.Substring(basefirm.IndexOf("TDS"));
                 custfirm = custfirm.Substring(custfirm.IndexOf("TDS"));
@@ -203,7 +212,11 @@ namespace HiSuite_Proxy
                         File.AppendAllText("logs.txt", debug);
                     }
                 }
-                if (reqeustURL.Contains("query.hicloud.com"))
+                if (reqeustURL.Contains("checkHiSuiteConnection"))
+                {
+                    e.Ok("Success");
+                }
+                else if (reqeustURL.Contains("query.hicloud.com"))
                 {
                     if (reqeustURL.Contains("CheckNewVersion.aspx"))
                     {
@@ -231,14 +244,36 @@ namespace HiSuite_Proxy
                         client.Headers.Set(HttpRequestHeader.Accept, "* /*");
                         client.Headers.Set(HttpRequestHeader.ContentType, "application/json;charset=UTF-8");
                         string updata = await e.GetRequestBodyAsString();
-                        string respons = client.UploadString("https://query.hicloud.com:443/sp_ard_common/v1/authorize.action", updata);
+                        string respons = "";
+                        try
+                        {
+                            respons = client.UploadString("https://query.hicloud.com:443/sp_ard_common/v1/authorize.action", updata);
+                        }
+                        catch(Exception ex)
+                        {
+                            respons = null;
+                            new Thread(() =>
+                            {
+                                MessageBox.Show(ex.Message + "\r\n\r\n Please check your internet connection", "Authorization Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }).Start();
+                        }
                         Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
-                        Headers.Add("Date", new HttpHeader("Date", client.ResponseHeaders[HttpResponseHeader.Date]));
+                        if (respons != null)
+                            Headers.Add("Date", new HttpHeader("Date", client.ResponseHeaders[HttpResponseHeader.Date]));
+                        else
+                            respons = "";
                         Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/plain;charset=UTF-8"));
                         Headers.Add("Server", new HttpHeader("Server", "elb"));
                         Headers.Add("X-XSS-Protection", new HttpHeader("X-XSS-Protection", "1; mode=block"));
                         Headers.Add("X-frame-options", new HttpHeader("X-frame-options", "SAMEORIGIN"));
                         Headers.Add("X-Content-Type-Options", new HttpHeader("X-Content-Type-Options", "nosniff"));
+                        if(respons.Length > 2)
+                        {
+                            if(!CheckAuthentication(updata, respons))
+                            {
+                                respons = "";
+                            }
+                        }
                         e.Ok(respons, Headers);
                     }
                     else if (e.HttpClient.Request.HasBody)
@@ -247,6 +282,12 @@ namespace HiSuite_Proxy
                         int whereisit = bodydata.IndexOf("PackageType");
                         if (whereisit != -1)
                         {
+                            if (textBox2.Text.Length < 2)
+                                textBox2.Text = "Unknown";
+                             if (textBox6.Text.Length < 2)
+                                textBox6.Text = "Unknown";
+                            if (textBox5.Text.Length < 2)
+                                textBox5.Text = "Unknown";
                             whereisit += 16;
                             int finish = bodydata.IndexOf('"', whereisit);
                             string pacakgetype = bodydata.Substring(whereisit, finish - whereisit);
@@ -400,7 +441,7 @@ namespace HiSuite_Proxy
             Process.Start("https://consumer.huawei.com/en/support/hisuite/");
         }
 
-        public void ReplaceHTTPComponent(string rawfile, string patchedfile)
+        public bool ReplaceHTTPComponent(string rawfile, string patchedfile, bool systemadmin = false)
         {
             Process[] hisuiteopen = Process.GetProcessesByName("HiSuite");
             if(hisuiteopen.Length > 0)
@@ -412,12 +453,20 @@ namespace HiSuite_Proxy
             {
                 File.Move(rawfile, rawfile.Replace(".dll", ".bak"));
                 File.WriteAllBytes(rawfile, File.ReadAllBytes(patchedfile));
-                MessageBox.Show("Successfully Patched!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if(!systemadmin)
+                {
+                    MessageBox.Show("Successfully Patched!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                return true;
             }
             catch(Exception e)
             {
-                MessageBox.Show(e.Message);
+                if (!systemadmin)
+                {
+                    MessageBox.Show(e.Message);
+                }
             }
+            return false;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -430,7 +479,7 @@ namespace HiSuite_Proxy
                 Patch(dialog.FileName);
             }
         }
-        private void Patch(string filename)
+        public bool Patch(string filename, bool systemadmin = false)
         {
             byte[] filedata = File.ReadAllBytes(filename);
 
@@ -441,20 +490,39 @@ namespace HiSuite_Proxy
 
                     string tempfile = Path.GetTempPath() + "httpcomponent.dll"; 
                     File.WriteAllBytes(tempfile, filedata);
-                    Process startprogram = new Process();
-                    startprogram.StartInfo.FileName = Process.GetCurrentProcess().MainModule.FileName;
-                    startprogram.StartInfo.Arguments = "\"" + filename + "\" \"" + tempfile + "\"";
-                    startprogram.StartInfo.Verb = "runas";
-                    startprogram.Start();
+                    if(!systemadmin)
+                    {
+                        Process startprogram = new Process();
+                        startprogram.StartInfo.FileName = Process.GetCurrentProcess().MainModule.FileName;
+                        startprogram.StartInfo.Arguments = "\"" + filename + "\" \"" + tempfile + "\"";
+                        startprogram.StartInfo.Verb = "runas";
+                        try
+                        {
+                            startprogram.Start();
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        return ReplaceHTTPComponent(filename, tempfile, true);
+                    }
+                    return true;
                 }
                 else
                 {
-                    MessageBox.Show("Some errors occured in the patching process!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if(!systemadmin)
+                        MessageBox.Show("Some errors occured in the patching process!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
                 }
             }
             else
             {
-                MessageBox.Show("This file is already patched.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if(!systemadmin)
+                    MessageBox.Show("This file is already patched.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return true;
             }
         }
         private bool PatcherReplace(byte[] data, byte[] replacewith, ref byte[] basedata)
@@ -512,6 +580,22 @@ namespace HiSuite_Proxy
         private void button5_Click(object sender, EventArgs e)
         {
             Process.Start("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=fullclip39@gmail.com&item_name=HISuite+Proxy+Support&no_shipping=1&lc=US");
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            Process startprogram = new Process();
+            startprogram.StartInfo.FileName = Process.GetCurrentProcess().MainModule.FileName;
+            startprogram.StartInfo.Arguments = "\"SETUP\"";
+            startprogram.StartInfo.Verb = "runas";
+            try
+            {
+                startprogram.Start();
+            }
+            catch
+            {
+
+            }
         }
 
         private void CopyFile(string romname, string filename, string packagename, int filekind)
@@ -645,6 +729,82 @@ namespace HiSuite_Proxy
             {
                 if(!e.Message.StartsWith("Thread was being"))
                 MessageBox.Show(e.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private bool CheckAuthentication(string phonedata, string response)
+        {
+            try
+            {
+                int where = response.IndexOf("data=");
+                if (where != -1)
+                {
+                    where += 5;
+                    int finish = response.IndexOf('&', where);
+                    string base64 = Encoding.UTF8.GetString(Convert.FromBase64String(response.Substring(where, finish - where)));
+                    if (base64.Contains("\"status\":\"1\"") || base64.Contains("\"status\":\"2\""))
+                    {
+                        new Thread(() =>
+                        {
+                            MessageBox.Show("Apparently Firm(s) is/are not approved for installation and proccess will most likely fail in phone.\r\n\r\nYou might want to consider cancelling it to avoid time waste.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }).Start();
+                        return true;
+                    }
+                    if(base64.Contains("\"status\":\"0\""))
+                    {
+                        where = phonedata.IndexOf("vendor");
+                        if (where != -1)
+                        {
+                            where += 7;
+                            where = phonedata.IndexOf('"', where);
+                            if (where != -1)
+                            {
+                                where++;
+                                finish = phonedata.IndexOf('-', where) + 1;
+                                string phonemodel = phonedata.Substring(where, finish - where).ToUpper();
+                                where = 0;
+                                while ((where = base64.IndexOf("versionNumber", where)) != -1)
+                                {
+                                    where += 14;
+                                    where = base64.IndexOf('"', where);
+                                    where++;
+                                    finish = base64.IndexOf('"', where);
+                                    string responsemodel = base64.Substring(where, finish - where).ToUpper();
+                                    if(!responsemodel.Contains("patch") && !responsemodel.Contains(phonemodel))
+                                    {
+                                        string showstr = "Your phone model: " + phonemodel + "\r\n";
+                                        showstr += "Installing Firm Of: " + responsemodel + "\r\n\r\n";
+                                        showstr += "Do you want to proceed? ( Might soft-brick your phone )";
+                                        if(MessageBox.Show(showstr, "Firm Mis-Match", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
+                                        {
+                                            return false;
+                                        }
+                                    }
+                                }
+                                return true;
+                            }
+                            else
+                            {
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return true;
             }
         }
     }

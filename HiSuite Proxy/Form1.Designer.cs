@@ -1,4 +1,4 @@
-namespace HiSuite_Proxy
+﻿namespace HiSuite_Proxy
 {
     partial class Form1
     {
@@ -61,6 +61,7 @@ namespace HiSuite_Proxy
             this.label8 = new System.Windows.Forms.Label();
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -161,7 +162,7 @@ namespace HiSuite_Proxy
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button3.Location = new System.Drawing.Point(296, 141);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(110, 23);
+            this.button3.Size = new System.Drawing.Size(100, 23);
             this.button3.TabIndex = 0;
             this.button3.Text = "Show Low Debug";
             this.button3.UseVisualStyleBackColor = true;
@@ -380,19 +381,31 @@ namespace HiSuite_Proxy
             // button5
             // 
             this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button5.Location = new System.Drawing.Point(417, 141);
+            this.button5.Location = new System.Drawing.Point(467, 141);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(101, 23);
+            this.button5.Size = new System.Drawing.Size(51, 23);
             this.button5.TabIndex = 28;
             this.button5.Text = "Donate";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // button6
+            // 
+            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button6.Location = new System.Drawing.Point(402, 141);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(59, 23);
+            this.button6.TabIndex = 29;
+            this.button6.Text = "SETUP";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(528, 172);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.checkBox2);
@@ -468,6 +481,7 @@ namespace HiSuite_Proxy
         private System.Windows.Forms.TextBox textBox8;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button6;
     }
 }
 

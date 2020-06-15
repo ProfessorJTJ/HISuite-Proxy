@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -769,7 +769,7 @@ namespace HiSuite_Proxy
                                     where++;
                                     finish = base64.IndexOf('"', where);
                                     string responsemodel = base64.Substring(where, finish - where).ToUpper();
-                                    if(!responsemodel.Contains("patch") && !responsemodel.Contains(phonemodel))
+                                    if(!responsemodel.Contains("PATCH") && !responsemodel.Contains(phonemodel))
                                     {
                                         string showstr = "Your phone model: " + phonemodel + "\r\n";
                                         showstr += "Installing Firm Of: " + responsemodel + "\r\n\r\n";

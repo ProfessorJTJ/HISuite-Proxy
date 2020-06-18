@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -77,7 +77,7 @@ namespace HiSuite_Proxy
                 }
 
                 AppendMessage("Checking HISuite Version...", GreenColor);
-                string settings = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\HiSuite\userdata\Setting.ini";
+                string settings = hisuitedir + @"\RunInfo.ini";
                 if (File.Exists(settings))
                 {
                     string data = File.ReadAllText(settings);

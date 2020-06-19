@@ -139,12 +139,13 @@ namespace HiSuite_Proxy
             if(File.Exists(settings))
             {
                 string[] settingsdata = File.ReadAllLines(settings);
-                bool changedsmth = false;
+                bool changedsmth = false, foundline = false;
                 for(int i = 0, j = settingsdata.Length; i < j;  i++)
                 {
                     string settingdata = settingsdata[i];
                     if (settingdata.StartsWith("proxytype"))
                     {
+                        foundline = true;
                         if (!settingdata.EndsWith("=2"))
                         {
                             changedsmth = true;
@@ -153,6 +154,7 @@ namespace HiSuite_Proxy
                     }
                     else if (settingdata.StartsWith("hostaddr"))
                     {
+                        foundline = true;
                         if (!settingdata.EndsWith("=127.0.0.1"))
                         {
                             changedsmth = true;
@@ -161,6 +163,7 @@ namespace HiSuite_Proxy
                     }
                     else if (settingdata.StartsWith("port"))
                     {
+                        foundline = true;
                         if (!settingdata.EndsWith("=7777"))
                         {
                             changedsmth = true;
@@ -169,23 +172,44 @@ namespace HiSuite_Proxy
                     }
                     else if (settingdata.StartsWith("username_s"))
                     {
-                        if(changedsmth)
+                        foundline = true;
+                        if (changedsmth)
                             settingsdata[i] = "username_s=";
                     }
                     else if (settingdata.StartsWith("password_s"))
                     {
-                        if(changedsmth)
+                        foundline = true;
+                        if (changedsmth)
                             settingsdata[i] = "password_s=";
                     }
                 }
-                if(changedsmth)
+                if(!foundline)
                 {
+                    List<string> nsettings = new List<string>(settingsdata);
+                    nsettings.Add("[proxy]");
+                    nsettings.Add("proxytype=2");
+                    nsettings.Add("hostaddr=127.0.0.1");
+                    nsettings.Add("port=7777");
+                    nsettings.Add("username=");
+                    nsettings.Add("password=");
+                    nsettings.Add("user_iv=");
+                    nsettings.Add("psw_iv=");
+                    nsettings.Add("username_s=");
+                    nsettings.Add("password_s=");
                     AppendMessage("Successfully Set Proxy Settings, Proceeding...", GreenColor);
-                    File.WriteAllLines(settings, settingsdata);
+                    File.WriteAllLines(settings, nsettings);
                 }
                 else
                 {
-                    AppendMessage("Proxy Settings Are Already Set, Proceeding...", OrangeColor);
+                    if (changedsmth)
+                    {
+                        AppendMessage("Successfully Set Proxy Settings, Proceeding...", GreenColor);
+                        File.WriteAllLines(settings, settingsdata);
+                    }
+                    else
+                    {
+                        AppendMessage("Proxy Settings Are Already Set, Proceeding...", OrangeColor);
+                    }
                 }
                 CheckHostFile();
             }

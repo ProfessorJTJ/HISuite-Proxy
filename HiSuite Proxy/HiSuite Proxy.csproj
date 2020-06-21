@@ -90,6 +90,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="authenticate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="authenticate.Designer.cs">
+      <DependentUpon>authenticate.cs</DependentUpon>
+    </Compile>
     <Compile Include="FirmFinder.cs">
       <SubType>Form</SubType>
     </Compile>

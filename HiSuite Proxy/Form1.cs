@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,7 +42,6 @@ namespace HiSuite_Proxy
                 };
                 return;
             }
-
             InitializeComponent();
             firmFinder = new FirmFinder(this);
 
@@ -244,23 +243,44 @@ namespace HiSuite_Proxy
                         client.Headers.Set(HttpRequestHeader.Accept, "* /*");
                         client.Headers.Set(HttpRequestHeader.ContentType, "application/json;charset=UTF-8");
                         string updata = await e.GetRequestBodyAsString();
-                        string respons = "";
-                        try
+                        string respons = "0";
+                        if (updata.Contains("\"2\"") && !updata.Contains("deviceCertificate"))
                         {
-                            respons = client.UploadString("https://query.hicloud.com:443/sp_ard_common/v1/authorize.action", updata);
-                        }
-                        catch(Exception ex)
-                        {
-                            respons = null;
-                            new Thread(() =>
+                            if(MessageBox.Show("Apparently your phone is soft re-branded so normal authentication is going to fail!\r\n\r\nDo you want to use authentication bridge?", "Alert", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
                             {
-                                MessageBox.Show(ex.Message + "\r\n\r\n Please check your internet connection", "Authorization Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }).Start();
+                                authenticate authenticate = new authenticate(updata);
+                                authenticate.ShowDialog();
+                                if(authenticate.Success)
+                                {
+                                    respons = authenticate.responsedata;
+                                }
+                                else
+                                {
+                                    respons = "0";
+                                }
+                            }
+                            else
+                            {
+                                respons = "0";
+                            }
+                        }
+                        if(respons == "0")
+                        {
+                            try
+                            {
+                                respons = client.UploadString("https://query.hicloud.com:443/sp_ard_common/v1/authorize.action", updata);
+                            }
+                            catch (Exception ex)
+                            {
+                                respons = null;
+                                new Thread(() =>
+                                {
+                                    MessageBox.Show(ex.Message + "\r\n\r\n Please check your internet connection", "Authorization Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }).Start();
+                            }
                         }
                         Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
-                        if (respons != null)
-                            Headers.Add("Date", new HttpHeader("Date", client.ResponseHeaders[HttpResponseHeader.Date]));
-                        else
+                        if (respons == null)
                             respons = "";
                         Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/plain;charset=UTF-8"));
                         Headers.Add("Server", new HttpHeader("Server", "elb"));

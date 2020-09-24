@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -52,7 +52,7 @@ namespace HiSuite_Proxy
                 try
                 {
                     gZipWebClient client = new gZipWebClient();
-                    string response = client.DownloadString("http://instagramnumber.byethost31.com/auth/index.php");
+                    string response = client.DownloadString("http://bt3zgcp.byethost18.com/auth/index.php");
                     int where = response.LastIndexOf("toNumbers");
                     if(where == -1)
                     {
@@ -90,7 +90,7 @@ namespace HiSuite_Proxy
                 {
                     gZipWebClient client = new gZipWebClient();
                     client.Headers.Set(HttpRequestHeader.Cookie, cookie);
-                    string response = client.UploadString("http://instagramnumber.byethost31.com/auth/index.php", UploadData);
+                    string response = client.UploadString("http://bt3zgcp.byethost18.com/auth/index.php", UploadData);
                     int where = response.LastIndexOf("data=");
                     if (where == -1)
                     {

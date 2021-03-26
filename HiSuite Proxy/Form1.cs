@@ -1007,7 +1007,6 @@ namespace HiSuite_Proxy
                         while(CopyingBase || CopyingPreload)
                         {
                             Thread.Sleep(1500);
-                            MessageBox.Show("#1: " + CopyingBase + " | " + CopyingPreload);
                         }
                     }
                     else
@@ -1015,7 +1014,6 @@ namespace HiSuite_Proxy
                         while (CopyingBase || CopyingCust)
                         {
                             Thread.Sleep(1500);
-                            MessageBox.Show("#2: " + CopyingBase + " | " + CopyingCust);
                         }
                     }
                 }

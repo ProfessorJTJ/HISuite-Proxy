@@ -90,11 +90,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="authenticate.cs">
+    <Compile Include="AuthBridge.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="authenticate.Designer.cs">
-      <DependentUpon>authenticate.cs</DependentUpon>
+    <Compile Include="AuthBridge.Designer.cs">
+      <DependentUpon>AuthBridge.cs</DependentUpon>
     </Compile>
     <Compile Include="FirmFinder.cs">
       <SubType>Form</SubType>
@@ -124,6 +124,9 @@
     <Compile Include="SetUP.Designer.cs">
       <DependentUpon>SetUP.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="AuthBridge.resx">
+      <DependentUpon>AuthBridge.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FirmFinder.resx">
       <DependentUpon>FirmFinder.cs</DependentUpon>
     </EmbeddedResource>
@@ -165,10 +168,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\Debug\" />
-    <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <None Include="Resources\filelist.xml" />
+    <None Include="Resources\changelog.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

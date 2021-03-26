@@ -11,6 +11,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Security;
 
+using ICSharpCode.SharpZipLib.Zip;
+using System.Security.Cryptography;
+
 namespace HiSuite_Proxy
 {
     public partial class Form1 : Form
@@ -24,9 +27,28 @@ namespace HiSuite_Proxy
         }
         public CustomData _customData = new CustomData();
         FirmFinder firmFinder = null;
+
+        private class PackageData
+        {
+            public string 
+                PackageFile,
+                PackageSize,
+                PackageName,
+                PackageMD5,
+                PackageSha256;
+            public PackageData(string PackageFile, string PackageName, string PackageSize, string PackageMD5, string PackageSha256)
+            {
+                this.PackageFile = PackageFile;
+                this.PackageName = PackageName;
+                this.PackageSize = PackageSize;
+                this.PackageMD5 = PackageMD5;
+                this.PackageSha256 = PackageSha256;
+            }
+        }
+        PackageData basePKGData = null, custPKGData = null, preloadPGKData = null;
         public Form1(string[] arguments)
         {
-            if(arguments.Length > 0 && arguments.Length == 2)
+            if (arguments.Length > 0 && arguments.Length == 2)
             {
                 ReplaceHTTPComponent(arguments[0], arguments[1]);
                 Environment.Exit(Environment.ExitCode);
@@ -43,6 +65,9 @@ namespace HiSuite_Proxy
                 return;
             }
             InitializeComponent();
+
+            textBox8.TextAlign = HorizontalAlignment.Center;
+
             firmFinder = new FirmFinder(this);
 
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
@@ -80,7 +105,6 @@ namespace HiSuite_Proxy
             }
 
             textBox3.ScrollBars = ScrollBars.Both;
-            textBox3.Visible = false;
             textBox1.TextChanged += delegate
             {
                 string text = textBox1.Text;
@@ -189,7 +213,7 @@ namespace HiSuite_Proxy
             try
             {
                 string reqeustURL = e.HttpClient.Request.Url;
-                if(reqeustURL.Contains("query.hicloud.com") || reqeustURL.Contains("/TDS/data/files"))
+                if (reqeustURL.Contains("query.hicloud.com") || reqeustURL.Contains("/TDS/data/files"))
                 {
                     this.Invoke(new Action(() =>
                     {
@@ -246,11 +270,11 @@ namespace HiSuite_Proxy
                         string respons = "0";
                         if (updata.Contains("\"2\"") && !updata.Contains("deviceCertificate"))
                         {
-                            if(MessageBox.Show("Apparently your phone is soft re-branded so normal authentication is going to fail!\r\n\r\nDo you want to use authentication bridge?", "Alert", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
+                            if (MessageBox.Show("Apparently your phone is soft re-branded so normal authentication is going to fail!\r\n\r\nDo you want to use authentication bridge?", "Alert", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
                             {
-                                authenticate authenticate = new authenticate(updata);
+                                AuthBridge authenticate = new AuthBridge(updata);
                                 authenticate.ShowDialog();
-                                if(authenticate.Success)
+                                if (authenticate.Success)
                                 {
                                     respons = authenticate.responsedata;
                                 }
@@ -264,7 +288,7 @@ namespace HiSuite_Proxy
                                 respons = "0";
                             }
                         }
-                        if(respons == "0")
+                        if (respons == "0")
                         {
                             try
                             {
@@ -287,9 +311,9 @@ namespace HiSuite_Proxy
                         Headers.Add("X-XSS-Protection", new HttpHeader("X-XSS-Protection", "1; mode=block"));
                         Headers.Add("X-frame-options", new HttpHeader("X-frame-options", "SAMEORIGIN"));
                         Headers.Add("X-Content-Type-Options", new HttpHeader("X-Content-Type-Options", "nosniff"));
-                        if(respons.Length > 2)
+                        if (respons.Length > 2)
                         {
-                            if(!CheckAuthentication(updata, respons))
+                            if (!CheckAuthentication(updata, respons))
                             {
                                 respons = "";
                             }
@@ -304,7 +328,7 @@ namespace HiSuite_Proxy
                         {
                             if (textBox2.Text.Length < 2)
                                 textBox2.Text = "Unknown";
-                             if (textBox6.Text.Length < 2)
+                            if (textBox6.Text.Length < 2)
                                 textBox6.Text = "Unknown";
                             if (textBox5.Text.Length < 2)
                                 textBox5.Text = "Unknown";
@@ -320,7 +344,7 @@ namespace HiSuite_Proxy
                             {
                                 opscheck = "full_back";
                             }
-                            else if(radioButton4.Checked)
+                            else if (radioButton4.Checked)
                             {
                                 opscheck = "full_recovery";
                             }
@@ -331,7 +355,7 @@ namespace HiSuite_Proxy
                                 if (Iveabase)
                                 {
                                     responsedata = responsedata.Replace("hasfullpackage", "0");
-                                    if(_customData.CustomBase)
+                                    if (_customData.CustomBase)
                                     {
                                         responsedata = responsedata.Replace("WriteVerionID", _customData.CustomBaseID);
                                     }
@@ -339,7 +363,7 @@ namespace HiSuite_Proxy
                                     {
                                         responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text));
                                     }
-                                    if(checkBox4.Checked)
+                                    if (checkBox4.Checked)
                                         responsedata = responsedata.Replace("pointbase", "1");
                                     else
                                         responsedata = responsedata.Replace("pointbase", "0");
@@ -355,7 +379,7 @@ namespace HiSuite_Proxy
 
                                 if (checkBox1.Checked)
                                 {
-                                    if(_customData.CustomPreload)
+                                    if (_customData.CustomPreload)
                                     {
                                         responsedata = responsedata.Replace("WiteVerionID", _customData.CustomPreloadID);
                                     }
@@ -365,7 +389,7 @@ namespace HiSuite_Proxy
                                     }
                                     if (checkBox6.Checked)
                                     {
-                                        if(Iveabase)
+                                        if (Iveabase)
                                         {
                                             responsedata = responsedata.Replace("pointpreload", "2");
                                         }
@@ -387,7 +411,7 @@ namespace HiSuite_Proxy
 
                                 if (checkBox3.Checked)
                                 {
-                                    if(_customData.CustomCust)
+                                    if (_customData.CustomCust)
                                     {
                                         responsedata = responsedata.Replace("WteVerionID", _customData.CustomCustID);
                                     }
@@ -405,7 +429,7 @@ namespace HiSuite_Proxy
                                         {
                                             responsedata = responsedata.Replace("pointcust", "1");
                                         }
-                                    }  
+                                    }
                                     else
                                         responsedata = responsedata.Replace("pointcust", "0");
                                     responsedata = responsedata.Replace("VrionURL", textBox7.Text);
@@ -430,9 +454,82 @@ namespace HiSuite_Proxy
                         }
                     }
                 }
+                else if (reqeustURL.Contains("update.dbankcdn.com"))
+                {
+                    if (reqeustURL.EndsWith("filelist.xml"))
+                    {
+                        string
+                            requestVersion = GetURLVersion(reqeustURL),
+                            baseVersionn = GetURLVersion(textBox1.Text),
+                            custVersionn = GetURLVersion(textBox7.Text),
+                            preloadVersionn = GetURLVersion(textBox4.Text);
+
+                        /*if (_customData.CustomBase)
+                            baseVersionn = _customData.CustomBaseID;
+
+                        if (_customData.CustomCust)
+                            custVersionn = _customData.CustomCustID;
+
+                        if (_customData.CustomPreload)
+                            custVersionn = _customData.CustomPreloadID;*/
+
+                        if (requestVersion == baseVersionn && basePKGData != null)
+                        {
+                            string responsefile = Properties.Resources.filelist;
+                            responsefile = responsefile.Replace("firmkind", "base");
+                            responsefile = responsefile.Replace("firmfile", basePKGData.PackageFile);
+
+                            responsefile = responsefile.Replace("firmMD5", basePKGData.PackageMD5);
+                            responsefile = responsefile.Replace("firmSHA256", basePKGData.PackageSha256);
+                            responsefile = responsefile.Replace("firmsize", basePKGData.PackageSize);
+
+                            Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                            Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/xml"));
+
+                            e.Ok(responsefile, Headers, true);
+                        }
+                        else if (requestVersion == custVersionn && custPKGData != null)
+                        {
+                            string responsefile = Properties.Resources.filelist;
+                            responsefile = responsefile.Replace("firmkind", "cust");
+                            responsefile = responsefile.Replace("firmfile", custPKGData.PackageFile);
+
+                            responsefile = responsefile.Replace("firmMD5", custPKGData.PackageMD5);
+                            responsefile = responsefile.Replace("firmSHA256", custPKGData.PackageSha256);
+                            responsefile = responsefile.Replace("firmsize", custPKGData.PackageSize);
+
+                            Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                            Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/xml"));
+
+                            e.Ok(responsefile, Headers, true);
+                        }
+                        else if (requestVersion == preloadVersionn && preloadPGKData != null)
+                        {
+                            string responsefile = Properties.Resources.filelist;
+                            responsefile = responsefile.Replace("firmkind", "preload");
+                            responsefile = responsefile.Replace("firmfile", preloadPGKData.PackageFile);
+
+                            responsefile = responsefile.Replace("firmMD5", preloadPGKData.PackageMD5);
+                            responsefile = responsefile.Replace("firmSHA256", preloadPGKData.PackageSha256);
+                            responsefile = responsefile.Replace("firmsize", preloadPGKData.PackageSize);
+
+                            Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                            Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/xml"));
+
+                            e.Ok(responsefile, Headers, true);
+                        }
+                    }
+                    else if (reqeustURL.EndsWith("changelog_base.xml") || reqeustURL.EndsWith("changelog.xml"))
+                    {
+                        Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                        Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/xml"));
+
+                        e.Ok(Properties.Resources.changelog, Headers, true);
+                    }
+                }
                 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 this.Invoke(new Action(() =>
                 {
@@ -447,18 +544,9 @@ namespace HiSuite_Proxy
             return Task.CompletedTask;
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            this.Size = new System.Drawing.Size(Width, Width - 50);
-            textBox3.Location = new System.Drawing.Point(10, 168);
-            textBox3.Size = new System.Drawing.Size(Width - 30, Width - 263);
-            textBox3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
-            textBox3.Visible = true;
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
-            Process.Start("https://consumer.huawei.com/en/support/hisuite/");
+            Process.Start("https://github.com/ProfessorJTJ/HISuite-Proxy/releases/download/1.8.8/HiSuite_10.0.1.100_OVE.zip");
         }
 
         public bool ReplaceHTTPComponent(string rawfile, string patchedfile, bool systemadmin = false)
@@ -503,7 +591,7 @@ namespace HiSuite_Proxy
         {
 
             byte[] finddata = new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0x51, 0xFF, 0x15, 0xC4, 0x32, 0x01, 0x10 }, replacedata = new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0x51, 0xFF, 0x15, 0xC4, 0x32, 0x01, 0x10 };
-
+            bool newHiSuite = false;
             try
             {
                 string settings = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + @"\HiSuite\RunInfo.ini";
@@ -511,6 +599,13 @@ namespace HiSuite_Proxy
                 {
                     finddata = new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0xFF, 0x35, 0x08, 0xD6, 0x02, 0x10 };
                     replacedata = new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0xFF, 0x35, 0x08, 0xD6, 0x02, 0x10 };
+                }
+                else if (File.ReadAllText(settings).Contains("version=11.0.0.510"))
+                {
+                    finddata = new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0xFF, 0x35, 0x70, 0x68, 0x03, 0x10 };
+                    replacedata = new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0xFF, 0x35, 0x70, 0x68, 0x03, 0x10 };
+                    newHiSuite = true;
+                    //return false;
                 }
             }
             catch
@@ -522,7 +617,7 @@ namespace HiSuite_Proxy
 
             if (PatcherReplace(finddata, replacedata, ref filedata))
             {
-                if (PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, new byte[] { 0x70, 0x70, 0x70, 0x70, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, ref filedata))
+                if (newHiSuite || PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, new byte[] { 0x70, 0x70, 0x70, 0x70, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, ref filedata))
                 {
 
                     string tempfile = Path.GetTempPath() + "httpcomponent.dll"; 
@@ -557,9 +652,18 @@ namespace HiSuite_Proxy
             }
             else
             {
-                if(!systemadmin)
-                    MessageBox.Show("This file is already patched.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return true;
+                if(FindArray(filedata, replacedata) == -1)
+                {
+                    if (!systemadmin)
+                        MessageBox.Show("Could not patch this version of HiSuite.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return false;
+                }
+                else
+                {
+                    if (!systemadmin)
+                        MessageBox.Show("File is already patched.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return true;
+                }
             }
         }
         private bool PatcherReplace(byte[] data, byte[] replacewith, ref byte[] basedata)
@@ -655,25 +759,33 @@ namespace HiSuite_Proxy
                     return;
                 CopyingPreload = true;
             }
+            Progress progress = new Progress("Copying File For " + romname);
             new Thread(() =>
             {
-                Progress progress = new Progress("Copying File For " + romname);
-                bool finished = false;
+                
+                bool finished = false, formLoaded = false;
+                progress.Load += delegate
+                {
+                    formLoaded = true;
+                };
                 Thread CopyThread = new Thread(() =>
                 {
-                    CopyItPlease(filekind, progress, romname, filename, packagename);
-                    finished = true;
-                    if(progress.Visible)
+                    try
                     {
-                        progress.Close();
-                    }
-                    else
-                    {
-                        progress.Load += delegate
+                        while (!formLoaded)
                         {
-                            progress.Close();
-                        };
+                            Thread.Sleep(400);
+                        }
+
+                        CopyItPlease(filekind, progress, romname, filename, packagename);
+                        finished = true;
                     }
+                    catch
+                    {
+
+                    }
+                    Thread.Sleep(400);
+                    progress.Close();
                 });
                 progress.FormClosing += delegate
                 {
@@ -695,9 +807,175 @@ namespace HiSuite_Proxy
                     }
                 };
                 CopyThread.Start();
-                progress.ShowDialog(this);
+                Invoke(new Action(() =>
+                {
+                    progress.Show();
+                }));
             }).Start();
         }
+
+        private string GetFileMD5CheckSum(Stream fileStream)
+        {
+            string MD5Result = null;
+            fileStream.Position = 0;
+            using (MD5 MD5 = MD5.Create())
+            {
+                MD5Result = BitConverter.ToString(MD5.ComputeHash(fileStream)).Replace("-", "").ToUpper();
+            }
+            return MD5Result;
+        }
+
+        private string GetFileSHA256CheckSum(Stream fileStream)
+        {
+            string SHA256Result = null;
+            fileStream.Position = 0;
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                SHA256Result = BitConverter.ToString(sha256.ComputeHash(fileStream)).Replace("-", "").ToUpper();
+            }
+            return SHA256Result;
+        }
+
+        private void custpkgSet_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "ZIP Files (*.zip)|*.zip|All Files (*.*)|*.*";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                custPKGData = LoadPackage(dialog.FileName);
+                if (custPKGData != null)
+                {
+                    custpkgName.Text = custPKGData.PackageName;
+                    textBox6.Enabled = false;
+                    textBox6.Text = custpkgName.Text;
+
+                    CopyFile(custpkgName.Text, dialog.FileName, Path.GetFileName(dialog.FileName), 1);
+                }
+                else
+                {
+                    textBox6.Enabled = true;
+                }
+            }
+            else
+            {
+                custpkgName.Text = "Not Set";
+                textBox6.Enabled = true;
+                custPKGData = null;
+            }
+        }
+
+        private void preloadpkgSet_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "ZIP Files (*.zip)|*.zip|All Files (*.*)|*.*";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                preloadPGKData = LoadPackage(dialog.FileName);
+                if (preloadPGKData != null)
+                {
+                    preloadpkgName.Text = preloadPGKData.PackageName;
+                    textBox5.Enabled = false;
+                    textBox5.Text = preloadpkgName.Text;
+
+                    CopyFile(preloadpkgName.Text, dialog.FileName, Path.GetFileName(dialog.FileName), 2);
+                }
+                else
+                {
+                    textBox5.Enabled = true;
+                }
+            }
+            else
+            {
+                preloadpkgName.Text = "Not Set";
+                textBox5.Enabled = true;
+                preloadPGKData = null;
+            }
+        }
+
+        private PackageData LoadPackage(string filename)
+        {
+            PackageData packageData = new PackageData(null, null, null, null, null);
+            try
+            {
+                Stream fileStream = File.OpenRead(filename);
+                ZipInputStream zipInputStream = new ZipInputStream(fileStream);
+
+                ZipEntry entry = null;
+                while((entry = zipInputStream.GetNextEntry()) != null)
+                {
+                    if(entry.Name.Contains("VERSION.mbn"))
+                    {
+                        byte[] readSize = new byte[(int)entry.Size];
+                        int ReadBytes = zipInputStream.Read(readSize, 0, readSize.Length);
+                        if(ReadBytes > 0)
+                        {
+                            string PackageName = Encoding.UTF8.GetString(readSize, 0, ReadBytes);
+                            PackageName = PackageName.Trim();
+                            int where = PackageName.IndexOf('\r'), where2 = PackageName.IndexOf('\n');
+                            if(where != -1 && (where < where2 || where2 == -1))
+                            {
+                                PackageName = PackageName.Substring(0, where);
+                            }
+                            else if(where2 != -1)
+                            {
+                                PackageName = PackageName.Substring(0, where2);
+                            }
+                            packageData.PackageName = PackageName;
+                        }
+                        break;
+                    }
+                }
+
+                if (packageData.PackageName != null)
+                {
+                    packageData.PackageFile = Path.GetFileName(filename);
+
+                    packageData.PackageSize = fileStream.Length.ToString();
+
+                    packageData.PackageSha256 = GetFileSHA256CheckSum(fileStream);
+
+                    packageData.PackageMD5 = GetFileMD5CheckSum(fileStream);
+
+                    return packageData;
+                }
+
+                zipInputStream.Close();
+                fileStream.Close();
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return null;
+        }
+        private void basepkgSet_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "ZIP Files (*.zip)|*.zip|All Files (*.*)|*.*";
+            if(dialog.ShowDialog() == DialogResult.OK)
+            {
+                basePKGData = LoadPackage(dialog.FileName);
+                if (basePKGData != null)
+                {
+                    basepkgName.Text = basePKGData.PackageName;
+                    textBox2.Enabled = false;
+                    textBox2.Text = basepkgName.Text;
+
+                    CopyFile(basepkgName.Text, dialog.FileName, Path.GetFileName(dialog.FileName), 0);
+                }
+                else
+                {
+                    textBox2.Enabled = true;
+                }
+            }
+            else
+            {
+                basepkgName.Text = "Not Set";
+                basePKGData = null;
+                textBox2.Enabled = true;
+            }
+        }
+
         private void CopyItPlease(int FileKind, Progress progress, string romname, string filename, string packagename)
         {
             try
@@ -713,6 +991,7 @@ namespace HiSuite_Proxy
                     }
                     else
                     {
+                        progress.SetProgress(100);
                         return;
                     }
                 }
@@ -725,9 +1004,10 @@ namespace HiSuite_Proxy
                 {
                     if(FileKind == 1)
                     {
-                        while(CopyingBase)
+                        while(CopyingBase || CopyingPreload)
                         {
                             Thread.Sleep(1500);
+                            MessageBox.Show("#1: " + CopyingBase + " | " + CopyingPreload);
                         }
                     }
                     else
@@ -735,6 +1015,7 @@ namespace HiSuite_Proxy
                         while (CopyingBase || CopyingCust)
                         {
                             Thread.Sleep(1500);
+                            MessageBox.Show("#2: " + CopyingBase + " | " + CopyingCust);
                         }
                     }
                 }
@@ -753,10 +1034,9 @@ namespace HiSuite_Proxy
                             int percentage = (int)((writtenlen * 100) / totallen);
                             if((percentage % 5) == 0)
                             {
-                                this.Invoke(new Action(() =>
-                                {
-                                    progress.SetProgress(percentage);
-                                }));
+
+                                progress.SetProgress(percentage);
+
                             }
                         }
                     }

@@ -1,4 +1,4 @@
-﻿namespace HiSuite_Proxy
+namespace HiSuite_Proxy
 {
     partial class Form1
     {
@@ -79,15 +79,18 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.panel10 = new System.Windows.Forms.Panel();
-            this.label18 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.basepkgName = new System.Windows.Forms.Label();
-            this.preloadpkgName = new System.Windows.Forms.Label();
-            this.basepkgSet = new System.Windows.Forms.Button();
-            this.custpkgName = new System.Windows.Forms.Label();
-            this.custpkgSet = new System.Windows.Forms.Button();
             this.preloadpkgSet = new System.Windows.Forms.Button();
+            this.custpkgSet = new System.Windows.Forms.Button();
+            this.custpkgName = new System.Windows.Forms.Label();
+            this.basepkgSet = new System.Windows.Forms.Button();
+            this.preloadpkgName = new System.Windows.Forms.Label();
+            this.basepkgName = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.textBox11 = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -351,7 +354,7 @@
             // 
             this.checkBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(116, 8);
+            this.checkBox4.Location = new System.Drawing.Point(352, 187);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(88, 17);
             this.checkBox4.TabIndex = 24;
@@ -362,7 +365,7 @@
             // 
             this.checkBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox5.AutoSize = true;
-            this.checkBox5.Location = new System.Drawing.Point(116, 33);
+            this.checkBox5.Location = new System.Drawing.Point(352, 211);
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.Size = new System.Drawing.Size(88, 17);
             this.checkBox5.TabIndex = 25;
@@ -373,7 +376,7 @@
             // 
             this.checkBox6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox6.AutoSize = true;
-            this.checkBox6.Location = new System.Drawing.Point(116, 58);
+            this.checkBox6.Location = new System.Drawing.Point(352, 235);
             this.checkBox6.Name = "checkBox6";
             this.checkBox6.Size = new System.Drawing.Size(88, 17);
             this.checkBox6.TabIndex = 26;
@@ -605,12 +608,12 @@
             // 
             this.panel9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panel9.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel9.Controls.Add(this.textBox11);
+            this.panel9.Controls.Add(this.textBox10);
+            this.panel9.Controls.Add(this.textBox9);
             this.panel9.Controls.Add(this.textBox2);
             this.panel9.Controls.Add(this.textBox6);
             this.panel9.Controls.Add(this.textBox5);
-            this.panel9.Controls.Add(this.checkBox4);
-            this.panel9.Controls.Add(this.checkBox5);
-            this.panel9.Controls.Add(this.checkBox6);
             this.panel9.Location = new System.Drawing.Point(359, 15);
             this.panel9.Name = "panel9";
             this.panel9.Size = new System.Drawing.Size(209, 91);
@@ -659,70 +662,25 @@
             this.panel10.Size = new System.Drawing.Size(216, 180);
             this.panel10.TabIndex = 47;
             // 
-            // label18
+            // preloadpkgSet
             // 
-            this.label18.AutoSize = true;
-            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label18.ForeColor = System.Drawing.Color.Crimson;
-            this.label18.Location = new System.Drawing.Point(4, 15);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(64, 13);
-            this.label18.TabIndex = 0;
-            this.label18.Text = "Base PKG";
+            this.preloadpkgSet.Location = new System.Drawing.Point(134, 126);
+            this.preloadpkgSet.Name = "preloadpkgSet";
+            this.preloadpkgSet.Size = new System.Drawing.Size(75, 23);
+            this.preloadpkgSet.TabIndex = 8;
+            this.preloadpkgSet.Text = "Set PKG";
+            this.preloadpkgSet.UseVisualStyleBackColor = true;
+            this.preloadpkgSet.Click += new System.EventHandler(this.preloadpkgSet_Click);
             // 
-            // label19
+            // custpkgSet
             // 
-            this.label19.AutoSize = true;
-            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label19.ForeColor = System.Drawing.Color.Crimson;
-            this.label19.Location = new System.Drawing.Point(4, 74);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(65, 13);
-            this.label19.TabIndex = 1;
-            this.label19.Text = "Cust PKG:";
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label20.ForeColor = System.Drawing.Color.Crimson;
-            this.label20.Location = new System.Drawing.Point(4, 136);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(83, 13);
-            this.label20.TabIndex = 2;
-            this.label20.Text = "Preload PKG:";
-            // 
-            // basepkgName
-            // 
-            this.basepkgName.AutoSize = true;
-            this.basepkgName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.basepkgName.ForeColor = System.Drawing.Color.Teal;
-            this.basepkgName.Location = new System.Drawing.Point(23, 37);
-            this.basepkgName.Name = "basepkgName";
-            this.basepkgName.Size = new System.Drawing.Size(50, 13);
-            this.basepkgName.TabIndex = 3;
-            this.basepkgName.Text = "Not Set";
-            // 
-            // preloadpkgName
-            // 
-            this.preloadpkgName.AutoSize = true;
-            this.preloadpkgName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.preloadpkgName.ForeColor = System.Drawing.Color.Teal;
-            this.preloadpkgName.Location = new System.Drawing.Point(23, 157);
-            this.preloadpkgName.Name = "preloadpkgName";
-            this.preloadpkgName.Size = new System.Drawing.Size(50, 13);
-            this.preloadpkgName.TabIndex = 4;
-            this.preloadpkgName.Text = "Not Set";
-            // 
-            // basepkgSet
-            // 
-            this.basepkgSet.Location = new System.Drawing.Point(134, 5);
-            this.basepkgSet.Name = "basepkgSet";
-            this.basepkgSet.Size = new System.Drawing.Size(75, 23);
-            this.basepkgSet.TabIndex = 5;
-            this.basepkgSet.Text = "Set PKG";
-            this.basepkgSet.UseVisualStyleBackColor = true;
-            this.basepkgSet.Click += new System.EventHandler(this.basepkgSet_Click);
+            this.custpkgSet.Location = new System.Drawing.Point(134, 64);
+            this.custpkgSet.Name = "custpkgSet";
+            this.custpkgSet.Size = new System.Drawing.Size(75, 23);
+            this.custpkgSet.TabIndex = 7;
+            this.custpkgSet.Text = "Set PKG";
+            this.custpkgSet.UseVisualStyleBackColor = true;
+            this.custpkgSet.Click += new System.EventHandler(this.custpkgSet_Click);
             // 
             // custpkgName
             // 
@@ -735,25 +693,97 @@
             this.custpkgName.TabIndex = 6;
             this.custpkgName.Text = "Not Set";
             // 
-            // custpkgSet
+            // basepkgSet
             // 
-            this.custpkgSet.Location = new System.Drawing.Point(134, 64);
-            this.custpkgSet.Name = "custpkgSet";
-            this.custpkgSet.Size = new System.Drawing.Size(75, 23);
-            this.custpkgSet.TabIndex = 7;
-            this.custpkgSet.Text = "Set PKG";
-            this.custpkgSet.UseVisualStyleBackColor = true;
-            this.custpkgSet.Click += new System.EventHandler(this.custpkgSet_Click);
+            this.basepkgSet.Location = new System.Drawing.Point(134, 5);
+            this.basepkgSet.Name = "basepkgSet";
+            this.basepkgSet.Size = new System.Drawing.Size(75, 23);
+            this.basepkgSet.TabIndex = 5;
+            this.basepkgSet.Text = "Set PKG";
+            this.basepkgSet.UseVisualStyleBackColor = true;
+            this.basepkgSet.Click += new System.EventHandler(this.basepkgSet_Click);
             // 
-            // preloadpkgSet
+            // preloadpkgName
             // 
-            this.preloadpkgSet.Location = new System.Drawing.Point(134, 126);
-            this.preloadpkgSet.Name = "preloadpkgSet";
-            this.preloadpkgSet.Size = new System.Drawing.Size(75, 23);
-            this.preloadpkgSet.TabIndex = 8;
-            this.preloadpkgSet.Text = "Set PKG";
-            this.preloadpkgSet.UseVisualStyleBackColor = true;
-            this.preloadpkgSet.Click += new System.EventHandler(this.preloadpkgSet_Click);
+            this.preloadpkgName.AutoSize = true;
+            this.preloadpkgName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.preloadpkgName.ForeColor = System.Drawing.Color.Teal;
+            this.preloadpkgName.Location = new System.Drawing.Point(23, 157);
+            this.preloadpkgName.Name = "preloadpkgName";
+            this.preloadpkgName.Size = new System.Drawing.Size(50, 13);
+            this.preloadpkgName.TabIndex = 4;
+            this.preloadpkgName.Text = "Not Set";
+            // 
+            // basepkgName
+            // 
+            this.basepkgName.AutoSize = true;
+            this.basepkgName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.basepkgName.ForeColor = System.Drawing.Color.Teal;
+            this.basepkgName.Location = new System.Drawing.Point(23, 37);
+            this.basepkgName.Name = "basepkgName";
+            this.basepkgName.Size = new System.Drawing.Size(50, 13);
+            this.basepkgName.TabIndex = 3;
+            this.basepkgName.Text = "Not Set";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label20.ForeColor = System.Drawing.Color.Crimson;
+            this.label20.Location = new System.Drawing.Point(4, 136);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(83, 13);
+            this.label20.TabIndex = 2;
+            this.label20.Text = "Preload PKG:";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label19.ForeColor = System.Drawing.Color.Crimson;
+            this.label19.Location = new System.Drawing.Point(4, 74);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(65, 13);
+            this.label19.TabIndex = 1;
+            this.label19.Text = "Cust PKG:";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.ForeColor = System.Drawing.Color.Crimson;
+            this.label18.Location = new System.Drawing.Point(4, 15);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(64, 13);
+            this.label18.TabIndex = 0;
+            this.label18.Text = "Base PKG";
+            // 
+            // textBox9
+            // 
+            this.textBox9.Enabled = false;
+            this.textBox9.Location = new System.Drawing.Point(108, 8);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(94, 20);
+            this.textBox9.TabIndex = 9;
+            this.textBox9.Text = "0";
+            // 
+            // textBox10
+            // 
+            this.textBox10.Enabled = false;
+            this.textBox10.Location = new System.Drawing.Point(108, 32);
+            this.textBox10.Name = "textBox10";
+            this.textBox10.Size = new System.Drawing.Size(94, 20);
+            this.textBox10.TabIndex = 10;
+            this.textBox10.Text = "0";
+            // 
+            // textBox11
+            // 
+            this.textBox11.Enabled = false;
+            this.textBox11.Location = new System.Drawing.Point(108, 58);
+            this.textBox11.Name = "textBox11";
+            this.textBox11.Size = new System.Drawing.Size(94, 20);
+            this.textBox11.TabIndex = 11;
+            this.textBox11.Text = "0";
             // 
             // Form1
             // 
@@ -763,6 +793,9 @@
             this.Controls.Add(this.label17);
             this.Controls.Add(this.panel10);
             this.Controls.Add(this.label8);
+            this.Controls.Add(this.checkBox6);
+            this.Controls.Add(this.checkBox5);
+            this.Controls.Add(this.checkBox4);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label14);
@@ -868,6 +901,9 @@
         private System.Windows.Forms.Label custpkgName;
         private System.Windows.Forms.Button preloadpkgSet;
         private System.Windows.Forms.Button custpkgSet;
+        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.TextBox textBox11;
+        private System.Windows.Forms.TextBox textBox10;
     }
 }
 

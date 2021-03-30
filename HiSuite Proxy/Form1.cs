@@ -113,6 +113,14 @@ namespace HiSuite_Proxy
                 {
                     textBox1.Text = text.Substring(0, ++where);
                 }
+                if(!text.Contains("/TDS/data/files"))
+                {
+                    textBox9.Enabled = true;
+                }
+                else
+                {
+                    textBox9.Enabled = false;
+                }
             };
             textBox4.TextChanged += delegate
             {
@@ -121,6 +129,15 @@ namespace HiSuite_Proxy
                 if (where != -1)
                 {
                     textBox4.Text = text.Substring(0, ++where);
+                }
+
+                if (!text.Contains("/TDS/data/files"))
+                {
+                    textBox11.Enabled = true;
+                }
+                else
+                {
+                    textBox11.Enabled = false;
                 }
             };
 
@@ -131,6 +148,14 @@ namespace HiSuite_Proxy
                 if (where != -1)
                 {
                     textBox7.Text = text.Substring(0, ++where);
+                }
+                if (!text.Contains("/TDS/data/files"))
+                {
+                    textBox10.Enabled = true;
+                }
+                else
+                {
+                    textBox10.Enabled = false;
                 }
             };
         }
@@ -194,19 +219,34 @@ namespace HiSuite_Proxy
             }
         }
 
-        private string GetURLVersion(string url)
+        private string GetURLVersion(string url, int type = 0)
         {
-            int where = url.IndexOf("/v");
-            if(where == -1)
+            if(url.Contains("/TDS/data/files"))
             {
-                return "Unknown";
+                int where = url.IndexOf("/v");
+                if (where == -1)
+                {
+                    return "Unknown";
+                }
+                else
+                {
+                    where += 2;
+                    int finish = url.IndexOf('/', where);
+                    return url.Substring(where, finish - where);
+                }
             }
             else
             {
-                where += 2;
-                int finish = url.IndexOf('/', where);
-                return url.Substring(where, finish - where);
+                if (type == 0)
+                    return (textBox9.Text == "0") ? ("Unknown") : (textBox9.Text);
+                else if (type == 1) // CUST
+                    return (textBox10.Text == "0") ? ("Unknown") : (textBox10.Text);
+                else if (type == 2) // Preload
+                    return (textBox11.Text == "0") ? ("Unknown") : (textBox11.Text);
+                else
+                    return "Unknown";
             }
+            
         }
         private async Task Proxyserver_BeforeRequest(object sender, Titanium.Web.Proxy.EventArguments.SessionEventArgs e)
         {
@@ -351,7 +391,7 @@ namespace HiSuite_Proxy
                             if (pacakgetype == opscheck)
                             {
                                 string responsedata = Encoding.UTF8.GetString(Properties.Resources.responsedata).Replace("\r\n", "");
-                                bool Iveabase = (GetURLVersion(textBox1.Text) != "Unknown");
+                                bool Iveabase = (GetURLVersion(textBox1.Text, 0) != "Unknown");
                                 if (Iveabase)
                                 {
                                     responsedata = responsedata.Replace("hasfullpackage", "0");
@@ -361,7 +401,7 @@ namespace HiSuite_Proxy
                                     }
                                     else
                                     {
-                                        responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text));
+                                        responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text, 0));
                                     }
                                     if (checkBox4.Checked)
                                         responsedata = responsedata.Replace("pointbase", "1");
@@ -385,7 +425,7 @@ namespace HiSuite_Proxy
                                     }
                                     else
                                     {
-                                        responsedata = responsedata.Replace("WiteVerionID", GetURLVersion(textBox4.Text));
+                                        responsedata = responsedata.Replace("WiteVerionID", GetURLVersion(textBox4.Text, 2));
                                     }
                                     if (checkBox6.Checked)
                                     {
@@ -417,7 +457,7 @@ namespace HiSuite_Proxy
                                     }
                                     else
                                     {
-                                        responsedata = responsedata.Replace("WteVerionID", GetURLVersion(textBox7.Text));
+                                        responsedata = responsedata.Replace("WteVerionID", GetURLVersion(textBox7.Text, 1));
                                     }
                                     if (checkBox5.Checked)
                                     {
@@ -460,9 +500,9 @@ namespace HiSuite_Proxy
                     {
                         string
                             requestVersion = GetURLVersion(reqeustURL),
-                            baseVersionn = GetURLVersion(textBox1.Text),
-                            custVersionn = GetURLVersion(textBox7.Text),
-                            preloadVersionn = GetURLVersion(textBox4.Text);
+                            baseVersionn = GetURLVersion(textBox1.Text, 0),
+                            custVersionn = GetURLVersion(textBox7.Text, 1),
+                            preloadVersionn = GetURLVersion(textBox4.Text, 2);
 
                         /*if (_customData.CustomBase)
                             baseVersionn = _customData.CustomBaseID;

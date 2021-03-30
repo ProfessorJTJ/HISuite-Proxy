@@ -1,4 +1,4 @@
-# [HISuite-Proxy](https://github.com/ProfessorJTJ/HISuite-Proxy/releases/latest) [For HISuite v10.0.1.100](https://github.com/ProfessorJTJ/HISuite-Proxy/releases/download/1.8.8/HiSuite_10.0.1.100_OVE.zip)
+# [HISuite-Proxy](https://github.com/ProfessorJTJ/HISuite-Proxy/releases/latest) - [HISuite v10.0.1.100](https://github.com/ProfessorJTJ/HISuite-Proxy/releases/download/1.8.8/HiSuite_10.0.1.100_OVE.zip) - [HUAWEI FIRM FINDER](http://firmfinder.byethost5.com/)
 Modifying HiSuite and manipulating it's connection data to install Roms before they officially get released.
 
 <a href="https://github.com/ProfessorJTJ/HISuite-Proxy/wiki"><img src="http://uupload.ir/files/y9vu_new.png"/></a>

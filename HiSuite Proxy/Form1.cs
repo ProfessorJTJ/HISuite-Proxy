@@ -253,6 +253,70 @@ namespace HiSuite_Proxy
             try
             {
                 string reqeustURL = e.HttpClient.Request.Url;
+                if(reqeustURL.EndsWith(":7777/addROM.txt"))
+                {
+                    if(e.HttpClient.Request.HasBody)
+                    {
+                        string Body = await e.GetRequestBodyAsString();
+                        string[] BodyData = Body.Split('|');
+                        if(BodyData.Length > 2)
+                        {
+                            if (BodyData[1].Contains("-PRELOAD "))
+                            {
+                                textBox4.Text = BodyData[2];
+                                textBox5.Text = BodyData[1];
+                                textBox11.Text = BodyData[0];
+                                checkBox1.Checked = true;
+                                //Activate();
+
+                                Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                                Headers.Add("Access-Control-Allow-Origin", new HttpHeader("Access-Control-Allow-Origin", e.HttpClient.Request.Headers.Headers["Origin"].Value));
+                                Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/plain"));
+                                e.Ok("OK", Headers);
+                            }
+                            else if (BodyData[1].Contains("-CUST "))
+                            {
+                                textBox7.Text = BodyData[2];
+                                textBox6.Text = BodyData[1];
+                                textBox10.Text = BodyData[0];
+                                checkBox3.Checked = true;
+                                //Activate();
+
+                                Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                                Headers.Add("Access-Control-Allow-Origin", new HttpHeader("Access-Control-Allow-Origin", e.HttpClient.Request.Headers.Headers["Origin"].Value));
+                                Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/plain"));
+                                e.Ok("OK", Headers);
+                            }
+                            else
+                            {
+                                textBox1.Text = BodyData[2];
+                                textBox2.Text = BodyData[1];
+                                textBox9.Text = BodyData[0];
+                                //Activate();
+
+                                Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                                Headers.Add("Access-Control-Allow-Origin", new HttpHeader("Access-Control-Allow-Origin", e.HttpClient.Request.Headers.Headers["Origin"].Value));
+                                Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/plain"));
+                                e.Ok("OK", Headers);
+                            }
+                        }
+                        else
+                        {
+                            Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                            Headers.Add("Access-Control-Allow-Origin", new HttpHeader("Access-Control-Allow-Origin", e.HttpClient.Request.Headers.Headers["Origin"].Value));
+                            Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/plain"));
+                            e.Ok("ERROR", Headers);
+                        }
+                    }
+                    else
+                    {
+                        Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                        Headers.Add("Access-Control-Allow-Origin", new HttpHeader("Access-Control-Allow-Origin", e.HttpClient.Request.Headers.Headers["Origin"].Value));
+                        Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/plain"));
+                        e.Ok("ERROR", Headers);
+                    }
+                    return;
+                }
                 if (reqeustURL.Contains("query.hicloud.com") || reqeustURL.Contains("/TDS/data/files"))
                 {
                     this.Invoke(new Action(() =>
@@ -945,7 +1009,10 @@ namespace HiSuite_Proxy
                 {
                     if(entry.Name.Contains("VERSION.mbn"))
                     {
-                        byte[] readSize = new byte[(int)entry.Size];
+                        int ReadSize = (int)entry.Size;
+                        if (ReadSize == -1)
+                            ReadSize = 1024;
+                        byte[] readSize = new byte[ReadSize];
                         int ReadBytes = zipInputStream.Read(readSize, 0, readSize.Length);
                         if(ReadBytes > 0)
                         {

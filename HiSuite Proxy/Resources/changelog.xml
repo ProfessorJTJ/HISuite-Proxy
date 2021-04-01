@@ -1,0 +1,23 @@
+<root>
+  <component name="TCPU" version="Unknown"/>
+  <default-language name="en-gb">2057</default-language>
+  <cleardata-flag>False</cleardata-flag>
+  <romsurvey-flag>False</romsurvey-flag>
+  <notify-level>40</notify-level>
+  <point-version>False</point-version>
+
+  <language name="en-gb" code="2057">
+    <features module="" type="header">
+      <feature>This is a new update, be happy.</feature>
+    </features>
+    <features module="[Note]">
+      <feature>Be sure you put correct ROM version in "Packages Url" section. or installation will fail</feature>
+      <feature>http://update.dbankcdn.com/TDS/data/files/p3/s15/G5398/g1755/"ROMVERSION"/f1/</feature>
+    </features>
+    <features module="[Note 2]" type="end">
+      <feature>
+        Always take a backup before updating.
+      </feature>
+    </features>
+  </language>
+</root>

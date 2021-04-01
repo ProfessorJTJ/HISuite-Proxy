@@ -1,0 +1,26 @@
+<root>
+<component>
+<name>TCPU</name>
+<compress>0</compress>
+</component>
+<maxStashInfo>52428800</maxStashInfo>
+<vendorInfo logfile="changelog.xml" name="firmkind" package="firmfile" precut_size="0" subpath=""/>
+<files>
+<file>
+<spath>firmfile</spath>
+<dpath>firmfile</dpath>
+<operation>c</operation>
+<md5>firmMD5</md5>
+<sha256>firmSHA256</sha256>
+<size>firmsize</size>
+</file>
+<file>
+<spath>changelog.xml</spath>
+<dpath>changelog.xml</dpath>
+<operation>c</operation>
+<md5>8AB3DF980B01133AC7CF3B662D634A42</md5>
+<sha256>323EAAF08A0E708B24425B1C1D863325C96249860B0D43C903D308F3FD5AC9F5</sha256>
+<size>616</size>
+</file>
+</files>
+</root>

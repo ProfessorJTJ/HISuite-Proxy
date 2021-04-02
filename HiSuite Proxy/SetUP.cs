@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,6 +16,7 @@ namespace HiSuite_Proxy
 {
     public partial class SetUP : Form
     {
+        private string HISuiteVersion = null;
         private Color GreenColor = Color.FromArgb(0, 204, 0), RedColor = Color.FromArgb(230, 46, 0), OrangeColor = Color.FromArgb(255, 175, 26);
         Form1 form;
         public SetUP(Form1 Form)
@@ -66,13 +67,21 @@ namespace HiSuite_Proxy
             string hisuitedir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + @"\HiSuite";
             if (File.Exists(hisuitedir + @"\httpcomponent.dll"))
             {
-                AppendMessage("HiSuite Exists, Proceeding...", GreenColor);    
-                
-                Process[] hisuiteopen = Process.GetProcessesByName("HiSuite");
-                if (hisuiteopen.Length > 0)
+                AppendMessage("HiSuite Exists, Proceeding...", GreenColor);
+
+                bool Closed = false;
+                Process[] hisuiteopen = Process.GetProcesses();
+                foreach(Process proc in hisuiteopen)
+                {
+                    if(proc.ProcessName.ToLower().Contains("hisuite") && !proc.ProcessName.ToLower().Contains("proxy"))
+                    {
+                        proc.Kill();
+                    }
+                }
+                if (Closed)
                 {
                     AppendMessage("Closing HISuite....", GreenColor);
-                    hisuiteopen[0].Kill();
+                    //hisuiteopen[0].Kill();
                     Thread.Sleep(1500);
                 }
 
@@ -85,6 +94,7 @@ namespace HiSuite_Proxy
                     if(whereisit != -1)
                     {
                         whereisit += 8;
+                        HISuiteVersion = data;
                         int finish = data.IndexOf('.', whereisit);
                         int versionparse = int.Parse(data.Substring(whereisit, finish - whereisit));
                         if(versionparse < 10)
@@ -113,7 +123,7 @@ namespace HiSuite_Proxy
                     AppendMessage("https://github.com/ProfessorJTJ/HISuite-Proxy/issues", GreenColor);
                     return;
                 }
-                AppendMessage("Patching httpcomponent.dll....", GreenColor);
+                AppendMessage("Patching HISuite Files....", GreenColor);
                 if(form.Patch(hisuitedir + @"\httpcomponent.dll", true))
                 {
                     AppendMessage("Patch succeeded, Proceeding....", GreenColor);
@@ -286,6 +296,11 @@ namespace HiSuite_Proxy
         {
             AppendMessage("", GreenColor);
             AppendMessage("Checks Finished, You can proceed to installation now!", GreenColor);
+
+            if (HISuiteVersion.Contains("version=11.0.0.510"))
+            {
+                AppendMessage("Use HISuite 11.exe instead of your older file...", GreenColor);
+            }
         }
     }
 }

@@ -316,7 +316,7 @@ namespace HiSuite_Proxy
                     }
                     return;
                 }
-                if (reqeustURL.Contains("query.hicloud.com") || reqeustURL.Contains("/TDS/data/files"))
+                if (reqeustURL.Contains("query.hicloud.com") || reqeustURL.Contains("/TDS/data/files") || reqeustURL.Contains("update.dbankcdn.com"))
                 {
                     this.Invoke(new Action(() =>
                     {
@@ -557,7 +557,7 @@ namespace HiSuite_Proxy
                         }
                     }
                 }
-                else if (reqeustURL.Contains("update.dbankcdn.com"))
+                else if (reqeustURL.Contains("update.dbankcdn.com") && reqeustURL.Contains("/TDS/data/files"))
                 {
                     if (reqeustURL.EndsWith("filelist.xml"))
                     {

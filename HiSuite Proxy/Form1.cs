@@ -50,7 +50,7 @@ namespace HiSuite_Proxy
         {
             if (arguments.Length > 0 && arguments.Length == 2)
             {
-                ReplaceHTTPComponent(arguments[0], arguments[1]);
+                ReplaceComponent(arguments[0], arguments[1]);
                 Environment.Exit(Environment.ExitCode);
                 return;
             }
@@ -218,7 +218,6 @@ namespace HiSuite_Proxy
                 }
             }
         }
-
         private string GetURLVersion(string url, int type = 0)
         {
             if(url.Contains("/TDS/data/files"))
@@ -576,10 +575,9 @@ namespace HiSuite_Proxy
 
                         if (_customData.CustomPreload)
                             custVersionn = _customData.CustomPreloadID;*/
-
                         if (requestVersion == baseVersionn && basePKGData != null)
                         {
-                            string responsefile = Properties.Resources.filelist;
+                            string responsefile = Properties.Resources.filelist.Replace("changelog", "changelog_base");
                             responsefile = responsefile.Replace("firmkind", "base");
                             responsefile = responsefile.Replace("firmfile", basePKGData.PackageFile);
 
@@ -653,7 +651,7 @@ namespace HiSuite_Proxy
             Process.Start("https://github.com/ProfessorJTJ/HISuite-Proxy/releases/download/1.8.8/HiSuite_10.0.1.100_OVE.zip");
         }
 
-        public bool ReplaceHTTPComponent(string rawfile, string patchedfile, bool systemadmin = false)
+        public bool ReplaceComponent(string rawfile, string patchedfile, bool systemadmin = false, bool ReplaceOriginalFile = true, string NewFileDirectory = null)
         {
             Process[] hisuiteopen = Process.GetProcessesByName("HiSuite");
             if(hisuiteopen.Length > 0)
@@ -663,8 +661,20 @@ namespace HiSuite_Proxy
             }
             try
             {
-                File.Move(rawfile, rawfile.Replace(".dll", ".bak"));
-                File.WriteAllBytes(rawfile, File.ReadAllBytes(patchedfile));
+                if(ReplaceOriginalFile)
+                {
+                    string targetFile = rawfile.Replace(".dll", ".bak");
+                    if (File.Exists(targetFile))
+                        File.Delete(targetFile);
+                    File.Move(rawfile, targetFile);
+                    File.Move(patchedfile, rawfile);
+                }
+                else
+                {
+                    if (File.Exists(NewFileDirectory))
+                        File.Delete(NewFileDirectory);
+                    File.Move(patchedfile, NewFileDirectory);
+                }
                 if(!systemadmin)
                 {
                     MessageBox.Show("Successfully Patched!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -706,6 +716,7 @@ namespace HiSuite_Proxy
                 }
                 else if (File.ReadAllText(settings).Contains("version=11.0.0.510"))
                 {
+                    //6A 00 6A 01 FF 35 70 68 03 10
                     finddata = new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0xFF, 0x35, 0x70, 0x68, 0x03, 0x10 };
                     replacedata = new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0xFF, 0x35, 0x70, 0x68, 0x03, 0x10 };
                     newHiSuite = true;
@@ -721,10 +732,10 @@ namespace HiSuite_Proxy
 
             if (PatcherReplace(finddata, replacedata, ref filedata))
             {
-                if (newHiSuite || PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, new byte[] { 0x70, 0x70, 0x70, 0x70, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, ref filedata))
+                if ((newHiSuite && PatcherReplace(new byte[] { 0xE8, 0x3C, 0x00, 0x00, 0x00, 0x83, 0xF8, 0x01 }, new byte[] { 0xE8, 0x3C, 0x00, 0x00, 0x00, 0x83, 0xF8, 0x05 }, ref filedata))
+                    || PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, new byte[] { 0x70, 0x70, 0x70, 0x70, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, ref filedata))
                 {
-
-                    string tempfile = Path.GetTempPath() + "httpcomponent.dll"; 
+                    string tempfile = Path.GetTempPath() + "httpcomponent.dll";
                     File.WriteAllBytes(tempfile, filedata);
                     if(!systemadmin)
                     {
@@ -743,7 +754,52 @@ namespace HiSuite_Proxy
                     }
                     else
                     {
-                        return ReplaceHTTPComponent(filename, tempfile, true);
+                        if (newHiSuite)
+                        {
+                            string HISuiteDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + @"\HiSuite\";
+                            bool succeded1 = ReplaceComponent(null, tempfile, true, false, HISuiteDir + "httpcomponenb.dll");
+
+                            filedata = File.ReadAllBytes(HISuiteDir + "HiSuite.exe");
+
+                            finddata = new byte[] { 0x68, 0x74, 0x74, 0x70, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x64, 0x6c, 0x6c };
+                            replacedata = new byte[] { 0x68, 0x74, 0x74, 0x70, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x62, 0x2e, 0x64, 0x6c, 0x6c };
+
+                            byte[] finddata2 = new byte[] { 0x43, 0x6f, 0x6d, 0x6d, 0x42, 0x61, 0x73, 0x65, 0x2e, 0x64, 0x6c, 0x6c };
+                            byte[] replacedata2 = new byte[] { 0x43, 0x6f, 0x6d, 0x6d, 0x42, 0x61, 0x7a, 0x65, 0x2e, 0x64, 0x6c, 0x6c };
+
+                            if (PatcherReplace(finddata, replacedata, ref filedata) && PatcherReplace(finddata2, replacedata2, ref filedata))
+                            {
+                                tempfile = Path.GetTempPath() + "HiSuite 11.exe";
+                                File.WriteAllBytes(tempfile, filedata);
+                                bool succeded2 = ReplaceComponent(null, tempfile, true, false, HISuiteDir + "HiSuite 11.exe");
+
+                                filedata = File.ReadAllBytes(HISuiteDir + "CommBase.dll");
+
+                                if (PatcherReplace(finddata, replacedata, ref filedata))
+                                {
+                                    tempfile = Path.GetTempPath() + "CommBaze.dll";
+                                    File.WriteAllBytes(tempfile, filedata);
+                                    bool succeded3 = ReplaceComponent(null, tempfile, true, false, HISuiteDir + "CommBaze.dll");
+                                    if(succeded1 && succeded2 && succeded3)
+                                    {
+                                        CreateShortcut(HISuiteDir + @"HiSuite 11.exe");
+                                    }
+                                    return (succeded1 && succeded2 && succeded3);
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            return ReplaceComponent(filename, tempfile, true);
+                        }
                     }
                     return true;
                 }
@@ -996,6 +1052,17 @@ namespace HiSuite_Proxy
             }
         }
 
+        private void CreateShortcut(string Source)
+        {
+            object shDesktop = (object)"Desktop";
+            IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
+            string shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + @"\HISuite 11.lnk";
+            IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(shortcutAddress);
+            shortcut.IconLocation = AppDomain.CurrentDomain.BaseDirectory + "icon.ico";
+            shortcut.Description = "Patched HISuite 11";
+            shortcut.TargetPath = Source;
+            shortcut.Save();
+        }
         private PackageData LoadPackage(string filename)
         {
             PackageData packageData = new PackageData(null, null, null, null, null);
@@ -1042,7 +1109,6 @@ namespace HiSuite_Proxy
                     packageData.PackageSha256 = GetFileSHA256CheckSum(fileStream);
 
                     packageData.PackageMD5 = GetFileMD5CheckSum(fileStream);
-
                     return packageData;
                 }
 

@@ -300,7 +300,8 @@ namespace HiSuite_Proxy
 
             if (HISuiteVersion.Contains("version=11.0.0.510"))
             {
-                AppendMessage("Use HISuite 11.exe instead of your older file...", GreenColor);
+                AppendMessage("Use HISuite 11.exe instead of your older file...", OrangeColor);
+                AppendMessage("If your phone doesn't connect, enable 'USB Debugging'.", OrangeColor);
             }
         }
     }

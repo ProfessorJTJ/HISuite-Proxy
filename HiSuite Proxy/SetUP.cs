@@ -76,6 +76,7 @@ namespace HiSuite_Proxy
                     if(proc.ProcessName.ToLower().Contains("hisuite") && !proc.ProcessName.ToLower().Contains("proxy"))
                     {
                         proc.Kill();
+                        Closed = true;
                     }
                 }
                 if (Closed)

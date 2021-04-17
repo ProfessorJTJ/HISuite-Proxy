@@ -11,8 +11,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Security;
 
-using ICSharpCode.SharpZipLib.Zip;
 using System.Security.Cryptography;
+
+using System.IO.Compression;
 
 namespace HiSuite_Proxy
 {
@@ -95,7 +96,7 @@ namespace HiSuite_Proxy
                 proxyserver.BeforeResponse += Proxyserver_BeforeResponse;
 
                 proxyserver.AddEndPoint(endpoint);
-
+                
                 proxyserver.Start();
             }
             catch (Exception ex)
@@ -367,13 +368,32 @@ namespace HiSuite_Proxy
                     else if (reqeustURL.Contains("authorize.action"))
                     {
                         WebClient client = new WebClient();
-                        client.Headers.Set(HttpRequestHeader.Accept, "* /*");
+                        client.Headers.Set(HttpRequestHeader.Accept, "*/*");
                         client.Headers.Set(HttpRequestHeader.ContentType, "application/json;charset=UTF-8");
                         string updata = await e.GetRequestBodyAsString();
                         string respons = "0";
+                        bool forceAuthBridge = checkBox7.Checked;
+                        if (forceAuthBridge)
+                        {
+                            int where = updata.IndexOf("\"deviceCertificate");
+                            if (where != -1)
+                            {
+                                int finish = updata.IndexOf("\",", where) + 2;
+                                finish = updata.IndexOf('"', finish);
+                                updata = updata.Remove(where, finish - where);
+                            }
+
+                            where = updata.IndexOf("\"keyAttestation");
+                            if (where != -1)
+                            {
+                                int finish = updata.IndexOf("\",", where) + 2;
+                                finish = updata.IndexOf('"', finish);
+                                updata = updata.Remove(where, finish - where);
+                            }
+                        }
                         if (updata.Contains("\"2\"") && !updata.Contains("deviceCertificate"))
                         {
-                            if (MessageBox.Show("Apparently your phone is soft re-branded so normal authentication is going to fail!\r\n\r\nDo you want to use authentication bridge?", "Alert", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
+                            if (forceAuthBridge || MessageBox.Show("Apparently your phone is soft re-branded so normal authentication is going to fail!\r\n\r\nDo you want to use authentication bridge?", "Alert", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
                             {
                                 AuthBridge authenticate = new AuthBridge(updata);
                                 authenticate.ShowDialog();
@@ -454,94 +474,126 @@ namespace HiSuite_Proxy
                             if (pacakgetype == opscheck)
                             {
                                 string responsedata = Encoding.UTF8.GetString(Properties.Resources.responsedata).Replace("\r\n", "");
-                                bool Iveabase = (GetURLVersion(textBox1.Text, 0) != "Unknown");
-                                if (Iveabase)
+                                if(checkBox8.Checked)
                                 {
-                                    responsedata = responsedata.Replace("hasfullpackage", "0");
-                                    if (_customData.CustomBase)
+                                    responsedata = Encoding.UTF8.GetString(Properties.Resources.oldresponse).Replace("\r\n", "");
+                                    bool Iveabase = (GetURLVersion(textBox1.Text, 0) != "Unknown");
+                                    if (Iveabase)
                                     {
-                                        responsedata = responsedata.Replace("WriteVerionID", _customData.CustomBaseID);
-                                    }
-                                    else
-                                    {
-                                        responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text, 0));
-                                    }
-                                    if (checkBox4.Checked)
-                                        responsedata = responsedata.Replace("pointbase", "1");
-                                    else
-                                        responsedata = responsedata.Replace("pointbase", "0");
-
-                                    responsedata = responsedata.Replace("basetype", textBox8.Text);
-                                    responsedata = responsedata.Replace("VersionURL", textBox1.Text);
-                                    responsedata = responsedata.Replace("Unknown1", textBox2.Text);
-                                }
-                                else
-                                {
-                                    responsedata = responsedata.Replace("hasfullpackage", "1");
-                                }
-
-                                if (checkBox1.Checked)
-                                {
-                                    if (_customData.CustomPreload)
-                                    {
-                                        responsedata = responsedata.Replace("WiteVerionID", _customData.CustomPreloadID);
-                                    }
-                                    else
-                                    {
-                                        responsedata = responsedata.Replace("WiteVerionID", GetURLVersion(textBox4.Text, 2));
-                                    }
-                                    if (checkBox6.Checked)
-                                    {
-                                        if (Iveabase)
+                                        responsedata = responsedata.Replace("hasfullpackage", "0");
+                                        if (_customData.CustomBase)
                                         {
-                                            responsedata = responsedata.Replace("pointpreload", "2");
+                                            responsedata = responsedata.Replace("WriteVerionID", _customData.CustomBaseID);
                                         }
                                         else
                                         {
-                                            responsedata = responsedata.Replace("pointpreload", "1");
+                                            responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text, 0));
                                         }
+                                        if (checkBox4.Checked)
+                                            responsedata = responsedata.Replace("pointbase", "1");
+                                        else
+                                            responsedata = responsedata.Replace("pointbase", "0");
+
+                                        responsedata = responsedata.Replace("basetype", textBox8.Text);
+                                        responsedata = responsedata.Replace("VersionURL", textBox1.Text);
+                                        responsedata = responsedata.Replace("Unknown1", textBox2.Text);
                                     }
                                     else
-                                        responsedata = responsedata.Replace("pointpreload", "0");
-                                    responsedata = responsedata.Replace("VrsionURL", textBox4.Text);
-                                    responsedata = responsedata.Replace("Unknown2", textBox5.Text);
-                                    responsedata = responsedata.Replace("hasreloadedpackage", "0");
+                                    {
+                                        responsedata = responsedata.Replace("hasfullpackage", "1");
+                                    }
                                 }
                                 else
                                 {
-                                    responsedata = responsedata.Replace("hasreloadedpackage", "1");
-                                }
-
-                                if (checkBox3.Checked)
-                                {
-                                    if (_customData.CustomCust)
+                                    bool Iveabase = (GetURLVersion(textBox1.Text, 0) != "Unknown");
+                                    if (Iveabase)
                                     {
-                                        responsedata = responsedata.Replace("WteVerionID", _customData.CustomCustID);
-                                    }
-                                    else
-                                    {
-                                        responsedata = responsedata.Replace("WteVerionID", GetURLVersion(textBox7.Text, 1));
-                                    }
-                                    if (checkBox5.Checked)
-                                    {
-                                        if (Iveabase)
+                                        responsedata = responsedata.Replace("hasfullpackage", "0");
+                                        if (_customData.CustomBase)
                                         {
-                                            responsedata = responsedata.Replace("pointcust", "2");
+                                            responsedata = responsedata.Replace("WriteVerionID", _customData.CustomBaseID);
                                         }
                                         else
                                         {
-                                            responsedata = responsedata.Replace("pointcust", "1");
+                                            responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text, 0));
                                         }
+                                        if (checkBox4.Checked)
+                                            responsedata = responsedata.Replace("pointbase", "1");
+                                        else
+                                            responsedata = responsedata.Replace("pointbase", "0");
+
+                                        responsedata = responsedata.Replace("basetype", textBox8.Text);
+                                        responsedata = responsedata.Replace("VersionURL", textBox1.Text);
+                                        responsedata = responsedata.Replace("Unknown1", textBox2.Text);
                                     }
                                     else
-                                        responsedata = responsedata.Replace("pointcust", "0");
-                                    responsedata = responsedata.Replace("VrionURL", textBox7.Text);
-                                    responsedata = responsedata.Replace("Unknown3", textBox6.Text);
-                                    responsedata = responsedata.Replace("hascustpackage", "0");
-                                }
-                                else
-                                {
-                                    responsedata = responsedata.Replace("hascustpackage", "1");
+                                    {
+                                        responsedata = responsedata.Replace("hasfullpackage", "1");
+                                    }
+
+                                    if (checkBox1.Checked)
+                                    {
+                                        if (_customData.CustomPreload)
+                                        {
+                                            responsedata = responsedata.Replace("WiteVerionID", _customData.CustomPreloadID);
+                                        }
+                                        else
+                                        {
+                                            responsedata = responsedata.Replace("WiteVerionID", GetURLVersion(textBox4.Text, 2));
+                                        }
+                                        if (checkBox6.Checked)
+                                        {
+                                            if (Iveabase)
+                                            {
+                                                responsedata = responsedata.Replace("pointpreload", "2");
+                                            }
+                                            else
+                                            {
+                                                responsedata = responsedata.Replace("pointpreload", "1");
+                                            }
+                                        }
+                                        else
+                                            responsedata = responsedata.Replace("pointpreload", "0");
+                                        responsedata = responsedata.Replace("VrsionURL", textBox4.Text);
+                                        responsedata = responsedata.Replace("Unknown2", textBox5.Text);
+                                        responsedata = responsedata.Replace("hasreloadedpackage", "0");
+                                    }
+                                    else
+                                    {
+                                        responsedata = responsedata.Replace("hasreloadedpackage", "1");
+                                    }
+
+                                    if (checkBox3.Checked)
+                                    {
+                                        if (_customData.CustomCust)
+                                        {
+                                            responsedata = responsedata.Replace("WteVerionID", _customData.CustomCustID);
+                                        }
+                                        else
+                                        {
+                                            responsedata = responsedata.Replace("WteVerionID", GetURLVersion(textBox7.Text, 1));
+                                        }
+                                        if (checkBox5.Checked)
+                                        {
+                                            if (Iveabase)
+                                            {
+                                                responsedata = responsedata.Replace("pointcust", "2");
+                                            }
+                                            else
+                                            {
+                                                responsedata = responsedata.Replace("pointcust", "1");
+                                            }
+                                        }
+                                        else
+                                            responsedata = responsedata.Replace("pointcust", "0");
+                                        responsedata = responsedata.Replace("VrionURL", textBox7.Text);
+                                        responsedata = responsedata.Replace("Unknown3", textBox6.Text);
+                                        responsedata = responsedata.Replace("hascustpackage", "0");
+                                    }
+                                    else
+                                    {
+                                        responsedata = responsedata.Replace("hascustpackage", "1");
+                                    }
                                 }
                                 Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
                                 Headers.Add("Content-Type", new HttpHeader("Content-Type", "application/json;charset=utf8"));
@@ -1068,52 +1120,54 @@ namespace HiSuite_Proxy
             PackageData packageData = new PackageData(null, null, null, null, null);
             try
             {
-                Stream fileStream = File.OpenRead(filename);
-                ZipInputStream zipInputStream = new ZipInputStream(fileStream);
-
-                ZipEntry entry = null;
-                while((entry = zipInputStream.GetNextEntry()) != null)
+                using (Stream fileStream = File.OpenRead(filename))
                 {
-                    if(entry.Name.Contains("VERSION.mbn"))
+                    using (ZipArchive zipInputStream = new ZipArchive(fileStream))
                     {
-                        int ReadSize = (int)entry.Size;
-                        if (ReadSize == -1)
-                            ReadSize = 1024;
-                        byte[] readSize = new byte[ReadSize];
-                        int ReadBytes = zipInputStream.Read(readSize, 0, readSize.Length);
-                        if(ReadBytes > 0)
+                        foreach (ZipArchiveEntry entry in zipInputStream.Entries)
                         {
-                            string PackageName = Encoding.UTF8.GetString(readSize, 0, ReadBytes);
-                            PackageName = PackageName.Trim();
-                            int where = PackageName.IndexOf('\r'), where2 = PackageName.IndexOf('\n');
-                            if(where != -1 && (where < where2 || where2 == -1))
+                            if (entry.Name.Contains("VERSION.mbn"))
                             {
-                                PackageName = PackageName.Substring(0, where);
+                                int ReadSize = (int)entry.Length;
+                                if (ReadSize == -1)
+                                    ReadSize = 1024;
+                                byte[] readSize = new byte[ReadSize];
+                                Stream entryStream = entry.Open();
+                                int ReadBytes = entryStream.Read(readSize, 0, readSize.Length);
+                                entryStream.Close();
+                                entryStream.Dispose();
+                                if (ReadBytes > 0)
+                                {
+                                    string PackageName = Encoding.UTF8.GetString(readSize, 0, ReadBytes);
+                                    PackageName = PackageName.Trim();
+                                    int where = PackageName.IndexOf('\r'), where2 = PackageName.IndexOf('\n');
+                                    if (where != -1 && (where < where2 || where2 == -1))
+                                    {
+                                        PackageName = PackageName.Substring(0, where);
+                                    }
+                                    else if (where2 != -1)
+                                    {
+                                        PackageName = PackageName.Substring(0, where2);
+                                    }
+                                    packageData.PackageName = PackageName;
+                                }
+                                break;
                             }
-                            else if(where2 != -1)
-                            {
-                                PackageName = PackageName.Substring(0, where2);
-                            }
-                            packageData.PackageName = PackageName;
                         }
-                        break;
+
+                        if (packageData.PackageName != null)
+                        {
+                            packageData.PackageFile = Path.GetFileName(filename);
+
+                            packageData.PackageSize = fileStream.Length.ToString();
+
+                            packageData.PackageSha256 = GetFileSHA256CheckSum(fileStream);
+
+                            packageData.PackageMD5 = GetFileMD5CheckSum(fileStream);
+                            return packageData;
+                        }
                     }
                 }
-
-                if (packageData.PackageName != null)
-                {
-                    packageData.PackageFile = Path.GetFileName(filename);
-
-                    packageData.PackageSize = fileStream.Length.ToString();
-
-                    packageData.PackageSha256 = GetFileSHA256CheckSum(fileStream);
-
-                    packageData.PackageMD5 = GetFileMD5CheckSum(fileStream);
-                    return packageData;
-                }
-
-                zipInputStream.Close();
-                fileStream.Close();
             }
             catch(Exception e)
             {

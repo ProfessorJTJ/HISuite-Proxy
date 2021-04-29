@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -35,6 +35,7 @@ namespace HiSuite_Proxy
                 }
                 catch(Exception e)
                 {
+                    //AppendMessage("Crashed! " + e.Message + Environment.NewLine + e.StackTrace + Environment.NewLine + Environment.NewLine + e.InnerException.StackTrace, RedColor);
                     AppendMessage("Crashed! " + e.Message, RedColor);
                     AppendMessage("Please Contact Developer If Error Continues", RedColor);
                     AppendMessage("https://github.com/ProfessorJTJ/HISuite-Proxy/issues", GreenColor);

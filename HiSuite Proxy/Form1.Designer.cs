@@ -1,4 +1,4 @@
-namespace HiSuite_Proxy
+﻿namespace HiSuite_Proxy
 {
     partial class Form1
     {
@@ -66,6 +66,7 @@ namespace HiSuite_Proxy
             this.panel3 = new System.Windows.Forms.Panel();
             this.label11 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.label12 = new System.Windows.Forms.Label();
             this.panel5 = new System.Windows.Forms.Panel();
             this.label13 = new System.Windows.Forms.Label();
@@ -76,6 +77,9 @@ namespace HiSuite_Proxy
             this.panel8 = new System.Windows.Forms.Panel();
             this.label16 = new System.Windows.Forms.Label();
             this.panel9 = new System.Windows.Forms.Panel();
+            this.textBox11 = new System.Windows.Forms.TextBox();
+            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.textBox9 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.panel10 = new System.Windows.Forms.Panel();
@@ -88,9 +92,8 @@ namespace HiSuite_Proxy
             this.label20 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
-            this.textBox9 = new System.Windows.Forms.TextBox();
-            this.textBox10 = new System.Windows.Forms.TextBox();
-            this.textBox11 = new System.Windows.Forms.TextBox();
+            this.checkBox8 = new System.Windows.Forms.CheckBox();
+            this.checkBox9 = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -132,7 +135,7 @@ namespace HiSuite_Proxy
             this.textBox3.Location = new System.Drawing.Point(12, 8);
             this.textBox3.Multiline = true;
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(301, 153);
+            this.textBox3.Size = new System.Drawing.Size(301, 154);
             this.textBox3.TabIndex = 29;
             // 
             // label3
@@ -266,7 +269,7 @@ namespace HiSuite_Proxy
             this.checkBox2.AutoSize = true;
             this.checkBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.checkBox2.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.checkBox2.Location = new System.Drawing.Point(202, 166);
+            this.checkBox2.Location = new System.Drawing.Point(202, 167);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(112, 17);
             this.checkBox2.TabIndex = 19;
@@ -354,7 +357,7 @@ namespace HiSuite_Proxy
             // 
             this.checkBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(352, 187);
+            this.checkBox4.Location = new System.Drawing.Point(70, 258);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(88, 17);
             this.checkBox4.TabIndex = 24;
@@ -365,7 +368,7 @@ namespace HiSuite_Proxy
             // 
             this.checkBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox5.AutoSize = true;
-            this.checkBox5.Location = new System.Drawing.Point(352, 211);
+            this.checkBox5.Location = new System.Drawing.Point(251, 258);
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.Size = new System.Drawing.Size(88, 17);
             this.checkBox5.TabIndex = 25;
@@ -376,7 +379,7 @@ namespace HiSuite_Proxy
             // 
             this.checkBox6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox6.AutoSize = true;
-            this.checkBox6.Location = new System.Drawing.Point(352, 235);
+            this.checkBox6.Location = new System.Drawing.Point(159, 258);
             this.checkBox6.Name = "checkBox6";
             this.checkBox6.Size = new System.Drawing.Size(88, 17);
             this.checkBox6.TabIndex = 26;
@@ -472,7 +475,7 @@ namespace HiSuite_Proxy
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label11.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.label11.Location = new System.Drawing.Point(20, 265);
+            this.label11.Location = new System.Drawing.Point(20, 268);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(44, 13);
             this.label11.TabIndex = 33;
@@ -485,12 +488,26 @@ namespace HiSuite_Proxy
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel4.BackColor = System.Drawing.SystemColors.Control;
             this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel4.Controls.Add(this.checkBox7);
             this.panel4.Controls.Add(this.checkBox2);
             this.panel4.Controls.Add(this.textBox3);
-            this.panel4.Location = new System.Drawing.Point(12, 276);
+            this.panel4.Location = new System.Drawing.Point(12, 279);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(327, 189);
+            this.panel4.Size = new System.Drawing.Size(327, 190);
             this.panel4.TabIndex = 27;
+            // 
+            // checkBox7
+            // 
+            this.checkBox7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBox7.AutoSize = true;
+            this.checkBox7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.checkBox7.ForeColor = System.Drawing.Color.OrangeRed;
+            this.checkBox7.Location = new System.Drawing.Point(11, 167);
+            this.checkBox7.Name = "checkBox7";
+            this.checkBox7.Size = new System.Drawing.Size(128, 17);
+            this.checkBox7.TabIndex = 30;
+            this.checkBox7.Text = "Force Auth Bridge";
+            this.checkBox7.UseVisualStyleBackColor = true;
             // 
             // label12
             // 
@@ -618,6 +635,33 @@ namespace HiSuite_Proxy
             this.panel9.Name = "panel9";
             this.panel9.Size = new System.Drawing.Size(209, 91);
             this.panel9.TabIndex = 44;
+            // 
+            // textBox11
+            // 
+            this.textBox11.Enabled = false;
+            this.textBox11.Location = new System.Drawing.Point(108, 58);
+            this.textBox11.Name = "textBox11";
+            this.textBox11.Size = new System.Drawing.Size(94, 20);
+            this.textBox11.TabIndex = 11;
+            this.textBox11.Text = "0";
+            // 
+            // textBox10
+            // 
+            this.textBox10.Enabled = false;
+            this.textBox10.Location = new System.Drawing.Point(108, 32);
+            this.textBox10.Name = "textBox10";
+            this.textBox10.Size = new System.Drawing.Size(94, 20);
+            this.textBox10.TabIndex = 10;
+            this.textBox10.Text = "0";
+            // 
+            // textBox9
+            // 
+            this.textBox9.Enabled = false;
+            this.textBox9.Location = new System.Drawing.Point(108, 8);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(94, 20);
+            this.textBox9.TabIndex = 9;
+            this.textBox9.Text = "0";
             // 
             // label8
             // 
@@ -758,38 +802,37 @@ namespace HiSuite_Proxy
             this.label18.TabIndex = 0;
             this.label18.Text = "Base PKG";
             // 
-            // textBox9
+            // checkBox8
             // 
-            this.textBox9.Enabled = false;
-            this.textBox9.Location = new System.Drawing.Point(108, 8);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(94, 20);
-            this.textBox9.TabIndex = 9;
-            this.textBox9.Text = "0";
+            this.checkBox8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox8.AutoSize = true;
+            this.checkBox8.ForeColor = System.Drawing.Color.OrangeRed;
+            this.checkBox8.Location = new System.Drawing.Point(346, 206);
+            this.checkBox8.Name = "checkBox8";
+            this.checkBox8.Size = new System.Drawing.Size(107, 17);
+            this.checkBox8.TabIndex = 48;
+            this.checkBox8.Text = "EMUI 8 Firmware";
+            this.checkBox8.UseVisualStyleBackColor = true;
             // 
-            // textBox10
+            // checkBox9
             // 
-            this.textBox10.Enabled = false;
-            this.textBox10.Location = new System.Drawing.Point(108, 32);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(94, 20);
-            this.textBox10.TabIndex = 10;
-            this.textBox10.Text = "0";
-            // 
-            // textBox11
-            // 
-            this.textBox11.Enabled = false;
-            this.textBox11.Location = new System.Drawing.Point(108, 58);
-            this.textBox11.Name = "textBox11";
-            this.textBox11.Size = new System.Drawing.Size(94, 20);
-            this.textBox11.TabIndex = 11;
-            this.textBox11.Text = "0";
+            this.checkBox9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox9.AutoSize = true;
+            this.checkBox9.ForeColor = System.Drawing.Color.OrangeRed;
+            this.checkBox9.Location = new System.Drawing.Point(346, 228);
+            this.checkBox9.Name = "checkBox9";
+            this.checkBox9.Size = new System.Drawing.Size(108, 17);
+            this.checkBox9.TabIndex = 49;
+            this.checkBox9.Text = "EMUI 7 Or Below";
+            this.checkBox9.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(582, 472);
+            this.ClientSize = new System.Drawing.Size(582, 473);
+            this.Controls.Add(this.checkBox9);
+            this.Controls.Add(this.checkBox8);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.panel10);
             this.Controls.Add(this.label8);
@@ -904,6 +947,9 @@ namespace HiSuite_Proxy
         private System.Windows.Forms.TextBox textBox9;
         private System.Windows.Forms.TextBox textBox11;
         private System.Windows.Forms.TextBox textBox10;
+        private System.Windows.Forms.CheckBox checkBox7;
+        private System.Windows.Forms.CheckBox checkBox8;
+        private System.Windows.Forms.CheckBox checkBox9;
     }
 }
 

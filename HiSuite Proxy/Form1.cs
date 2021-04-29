@@ -159,6 +159,18 @@ namespace HiSuite_Proxy
                     textBox10.Enabled = false;
                 }
             };
+
+            checkBox8.CheckedChanged += delegate
+            {
+                if (checkBox8.Checked && checkBox9.Checked)
+                    checkBox9.Checked = false;
+            };
+
+            checkBox9.CheckedChanged += delegate
+            {
+                if (checkBox8.Checked && checkBox9.Checked)
+                    checkBox8.Checked = false;
+            };
         }
 
         private async Task Proxyserver_BeforeResponse(object sender, Titanium.Web.Proxy.EventArguments.SessionEventArgs e)
@@ -471,10 +483,38 @@ namespace HiSuite_Proxy
                             {
                                 opscheck = "full_recovery";
                             }
+                            /*if((checkBox9.Checked || checkBox8.Checked) && checkBox10.Checked)
+                            {
+                                opscheck = "increment";
+                            }*/
                             if (pacakgetype == opscheck)
                             {
                                 string responsedata = Encoding.UTF8.GetString(Properties.Resources.responsedata).Replace("\r\n", "");
-                                if(checkBox8.Checked)
+                                if(checkBox9.Checked) // EMUI 7
+                                {
+                                    responsedata = Encoding.UTF8.GetString(Properties.Resources.emui7resp).Replace("\r\n", "");
+                                    bool Iveabase = (GetURLVersion(textBox1.Text, 0) != "Unknown");
+                                    if (Iveabase)
+                                    {
+                                        if (_customData.CustomBase)
+                                        {
+                                            responsedata = responsedata.Replace("WriteVerionID", _customData.CustomBaseID);
+                                        }
+                                        else
+                                        {
+                                            responsedata = responsedata.Replace("WriteVerionID", GetURLVersion(textBox1.Text, 0));
+                                        }
+                                        if (checkBox4.Checked)
+                                            responsedata = responsedata.Replace("pointbase", "1");
+                                        else
+                                            responsedata = responsedata.Replace("pointbase", "0");
+
+                                        responsedata = responsedata.Replace("basetype", textBox8.Text);
+                                        responsedata = responsedata.Replace("VersionURL", textBox1.Text);
+                                        responsedata = responsedata.Replace("Unknown1", textBox2.Text);
+                                    }
+                                }
+                                if(checkBox8.Checked) // EMUI 8
                                 {
                                     responsedata = Encoding.UTF8.GetString(Properties.Resources.oldresponse).Replace("\r\n", "");
                                     bool Iveabase = (GetURLVersion(textBox1.Text, 0) != "Unknown");
@@ -761,15 +801,18 @@ namespace HiSuite_Proxy
             try
             {
                 string settings = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + @"\HiSuite\RunInfo.ini";
-                if(File.ReadAllText(settings).Contains("version=10.1.0.550"))
+
+                string hiSuiteVersionNumber = File.ReadAllText(settings);
+                if (hiSuiteVersionNumber.Contains("version=10.1.0.550"))
                 {
                     finddata = new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0xFF, 0x35, 0x08, 0xD6, 0x02, 0x10 };
                     replacedata = new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0xFF, 0x35, 0x08, 0xD6, 0x02, 0x10 };
                 }
-                else if (File.ReadAllText(settings).Contains("version=11.0.0.510"))
+                else if (hiSuiteVersionNumber.Contains("version=11.0.0.510") || hiSuiteVersionNumber.Contains("version=11.0.0.530"))
                 {
                     //6A 00 6A 01 FF 35 70 68 03 10
                     finddata = new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0xFF, 0x35, 0x70, 0x68, 0x03, 0x10 };
+                    //FF 35 70 68 03 10
                     replacedata = new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0xFF, 0x35, 0x70, 0x68, 0x03, 0x10 };
                     newHiSuite = true;
                     //return false;
@@ -780,6 +823,7 @@ namespace HiSuite_Proxy
 
             }
 
+            //File.AppendAllText("debugfile.txt", "Reading: " + filename + Environment.NewLine); // DEBUG
             byte[] filedata = File.ReadAllBytes(filename);
 
             if (PatcherReplace(finddata, replacedata, ref filedata))
@@ -788,6 +832,8 @@ namespace HiSuite_Proxy
                     || PatcherReplace(new byte[] { 0x71, 0x75, 0x65, 0x72, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, new byte[] { 0x70, 0x70, 0x70, 0x70, 0x79, 0x2E, 0x68, 0x69, 0x63, 0x6C, 0x6F, 0x75, 0x64, 0x2E, 0x63, 0x6F, 0x6D }, ref filedata))
                 {
                     string tempfile = Path.GetTempPath() + "httpcomponent.dll";
+
+                    //File.AppendAllText("debugfile.txt", "Writing: " + tempfile + Environment.NewLine); // DEBUG
                     File.WriteAllBytes(tempfile, filedata);
                     if(!systemadmin)
                     {
@@ -809,8 +855,10 @@ namespace HiSuite_Proxy
                         if (newHiSuite)
                         {
                             string HISuiteDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + @"\HiSuite\";
+                            //File.AppendAllText("debugfile.txt", "Replacing: " + tempfile + " with " + HISuiteDir + Environment.NewLine); // DEBUG
                             bool succeded1 = ReplaceComponent(null, tempfile, true, false, HISuiteDir + "httpcomponenb.dll");
 
+                            //File.AppendAllText("debugfile.txt", "Reading: " + HISuiteDir + "HiSuite.exe" + Environment.NewLine); // DEBUG
                             filedata = File.ReadAllBytes(HISuiteDir + "HiSuite.exe");
 
                             finddata = new byte[] { 0x68, 0x74, 0x74, 0x70, 0x63, 0x6f, 0x6d, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x2e, 0x64, 0x6c, 0x6c };
@@ -819,21 +867,27 @@ namespace HiSuite_Proxy
                             byte[] finddata2 = new byte[] { 0x43, 0x6f, 0x6d, 0x6d, 0x42, 0x61, 0x73, 0x65, 0x2e, 0x64, 0x6c, 0x6c };
                             byte[] replacedata2 = new byte[] { 0x43, 0x6f, 0x6d, 0x6d, 0x42, 0x61, 0x7a, 0x65, 0x2e, 0x64, 0x6c, 0x6c };
 
+
                             if (PatcherReplace(finddata, replacedata, ref filedata) && PatcherReplace(finddata2, replacedata2, ref filedata))
                             {
                                 tempfile = Path.GetTempPath() + "HiSuite 11.exe";
+                                //File.AppendAllText("debugfile.txt", "Writing: " + tempfile + Environment.NewLine); // DEBUG
                                 File.WriteAllBytes(tempfile, filedata);
+                                //File.AppendAllText("debugfile.txt", "Replacing: " + tempfile + " with " + HISuiteDir + "HiSuite 11.exe" + Environment.NewLine); // DEBUG
                                 bool succeded2 = ReplaceComponent(null, tempfile, true, false, HISuiteDir + "HiSuite 11.exe");
-
+                                //File.AppendAllText("debugfile.txt", "Reading: " + HISuiteDir + "CommBase.dll" + Environment.NewLine); // DEBUG
                                 filedata = File.ReadAllBytes(HISuiteDir + "CommBase.dll");
 
                                 if (PatcherReplace(finddata, replacedata, ref filedata))
                                 {
                                     tempfile = Path.GetTempPath() + "CommBaze.dll";
+                                    //File.AppendAllText("debugfile.txt", "Writing: " + tempfile + Environment.NewLine); // DEBUG
                                     File.WriteAllBytes(tempfile, filedata);
+                                    //File.AppendAllText("debugfile.txt", "Replacing: " + tempfile + " with " + HISuiteDir + Environment.NewLine); // DEBUG
                                     bool succeded3 = ReplaceComponent(null, tempfile, true, false, HISuiteDir + "CommBaze.dll");
                                     if(succeded1 && succeded2 && succeded3)
                                     {
+                                        //File.AppendAllText("debugfile.txt", "Creating shortcut: " + HISuiteDir + @"HiSuite 11.exe" + Environment.NewLine); // DEBUG
                                         CreateShortcut(HISuiteDir + @"HiSuite 11.exe");
                                     }
                                     return (succeded1 && succeded2 && succeded3);

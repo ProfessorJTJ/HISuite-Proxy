@@ -1,0 +1,25 @@
+{
+"status": "0",
+"versionPackageCheckResults": [
+{
+"status": "hasfullpackage",
+"autoPollingCycle": "1",
+"components": [
+{
+"componentID": 1,
+"createTime": "2020-04-02T07:02:39+0000",
+"description": "",
+"name": "Unknown1",
+"pointVersion": "pointbase",
+"reserveUrl": "updatessl.dbankcdn.com",
+"ruleAttr": "",
+"url": "VersionURL",
+"version": "Unknown1",
+"versionID": "WriteVerionID"
+}
+],
+"versionPackageType": 1,
+"checkEnd": "1"
+}
+]
+}

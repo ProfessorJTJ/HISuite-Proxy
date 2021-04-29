@@ -1,0 +1,66 @@
+{
+"status": "0",
+"versionPackageCheckResults": [
+{
+"status": "hasfullpackage",
+"autoPollingCycle": "1",
+"versionPackageType": 2,
+"components": [
+{
+"versionID": "WriteVerionID",
+"version": "Unknown1",
+"name": "Unknown1",
+"pointVersion": "pointbase",
+"versionType": "basetype",
+"url": "VersionURL",
+"createTime": "2020-04-02T07:02:39+0000",
+"componentID": 1,
+"description": "",
+"reserveUrl": "updatessl.dbankcdn.com",
+"ruleAttr": ""
+}
+],
+"checkEnd": "1"
+},
+{
+"status": "hascustpackage",
+"autoPollingCycle": "1",
+"components": [
+{
+"componentID": 1,
+"createTime": "2020-04-02T06:33:41+0000",
+"description": "",
+"name": "Unknown3",
+"pointVersion": "pointcust",
+"reserveUrl": "updatessl.dbankcdn.com",
+"ruleAttr": "",
+"url": "VrionURL",
+"version": "Unknown3",
+"versionID": "WteVerionID"
+}
+],
+"versionPackageType": 3,
+"checkEnd": "1"
+},
+{
+"status": "hasreloadedpackage",
+"autoPollingCycle": "1",
+"components": [
+{
+"componentID": 1,
+"createTime": "2020-04-02T06:33:41+0000",
+"description": "",
+"name": "Unknown2",
+"pointVersion": "pointpreload",
+"reserveUrl": "updatessl.dbankcdn.com",
+"ruleAttr": "",
+"url": "VrsionURL",
+"version": "Unknown2",
+"versionID": "WiteVerionID"
+}
+],
+"versionPackageType": 4,
+"checkEnd": "1"
+}
+]
+}

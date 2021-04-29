@@ -61,11 +61,82 @@ namespace HiSuite_Proxy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;root&gt;
+        ///  &lt;component name=&quot;TCPU&quot; version=&quot;Unknown&quot;/&gt;
+        ///  &lt;default-language name=&quot;en-gb&quot;&gt;2057&lt;/default-language&gt;
+        ///  &lt;cleardata-flag&gt;False&lt;/cleardata-flag&gt;
+        ///  &lt;romsurvey-flag&gt;False&lt;/romsurvey-flag&gt;
+        ///  &lt;notify-level&gt;40&lt;/notify-level&gt;
+        ///  &lt;point-version&gt;False&lt;/point-version&gt;
+        ///
+        ///  &lt;language name=&quot;en-gb&quot; code=&quot;2057&quot;&gt;
+        ///    &lt;features module=&quot;&quot; type=&quot;header&quot;&gt;
+        ///      &lt;feature&gt;This is a new update, be happy.&lt;/feature&gt;
+        ///    &lt;/features&gt;
+        ///    &lt;features module=&quot;[Note]&quot;&gt;
+        ///      &lt;feature&gt;Be sure you put correct ROM version in [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string changelog {
+            get {
+                return ResourceManager.GetString("changelog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] emptyresponse {
             get {
                 object obj = ResourceManager.GetObject("emptyresponse", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] emui7resp {
+            get {
+                object obj = ResourceManager.GetObject("emui7resp", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;root&gt;
+        ///&lt;component&gt;
+        ///&lt;name&gt;TCPU&lt;/name&gt;
+        ///&lt;compress&gt;0&lt;/compress&gt;
+        ///&lt;/component&gt;
+        ///&lt;maxStashInfo&gt;52428800&lt;/maxStashInfo&gt;
+        ///&lt;vendorInfo logfile=&quot;changelog.xml&quot; name=&quot;firmkind&quot; package=&quot;firmfile&quot; precut_size=&quot;0&quot; subpath=&quot;&quot;/&gt;
+        ///&lt;files&gt;
+        ///&lt;file&gt;
+        ///&lt;spath&gt;firmfile&lt;/spath&gt;
+        ///&lt;dpath&gt;firmfile&lt;/dpath&gt;
+        ///&lt;operation&gt;c&lt;/operation&gt;
+        ///&lt;md5&gt;firmMD5&lt;/md5&gt;
+        ///&lt;sha256&gt;firmSHA256&lt;/sha256&gt;
+        ///&lt;size&gt;firmsize&lt;/size&gt;
+        ///&lt;/file&gt;
+        ///&lt;file&gt;
+        ///&lt;spath&gt;changelog.xml&lt;/spath&gt;
+        ///&lt;dpath&gt;changelog.xml&lt;/dpath&gt;
+        ///&lt;operation&gt;c&lt;/operation&gt;
+        ///&lt;md5&gt;8AB3DF980B01133AC7CF3 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string filelist {
+            get {
+                return ResourceManager.GetString("filelist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] oldresponse {
+            get {
+                object obj = ResourceManager.GetObject("oldresponse", resourceCulture);
                 return ((byte[])(obj));
             }
         }

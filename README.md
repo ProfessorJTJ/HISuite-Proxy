@@ -1,6 +1,11 @@
 # [HISuite-Proxy](https://github.com/ProfessorJTJ/HISuite-Proxy/releases/latest) - [HISuite v11.0.0.510](https://github.com/ProfessorJTJ/HISuite-Proxy/releases/download/2.3/HiSuite_11.0.0.510_OVE.rar) - [HUAWEI FIRM FINDER](https://www.firmfinder.ml/)
 Modifying HiSuite and manipulating it's connection data to install Roms before they officially get released.
 
+```diff
+- ALERT : Downgrading from Latest EMUI 11 disables your phone's Fast Charging, Fastboot, USB Connection and TestPoint.
+- The only way to fix it is updating through OTA, Erecovery or Dload by memorycard to latest EMUI 11. 
+```
+
 <a href="https://github.com/ProfessorJTJ/HISuite-Proxy/wiki"><img src="http://uupload.ir/files/y9vu_new.png"/></a>
 
 [System Recovery Rom Instruction ( Soft-Bricked )](https://github.com/ProfessorJTJ/HISuite-Proxy/wiki/System-Recovery-Rom-Instruction) [ Not guaranteed to work ]

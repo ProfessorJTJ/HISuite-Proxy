@@ -10,9 +10,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Security;
-
 using System.Security.Cryptography;
-
 using System.IO.Compression;
 
 namespace HiSuite_Proxy
@@ -159,23 +157,12 @@ namespace HiSuite_Proxy
                     textBox10.Enabled = false;
                 }
             };
-
-            checkBox8.CheckedChanged += delegate
-            {
-                if (checkBox8.Checked && checkBox9.Checked)
-                    checkBox9.Checked = false;
-            };
-
-            checkBox9.CheckedChanged += delegate
-            {
-                if (checkBox8.Checked && checkBox9.Checked)
-                    checkBox8.Checked = false;
-            };
         }
 
         private async Task Proxyserver_BeforeResponse(object sender, Titanium.Web.Proxy.EventArguments.SessionEventArgs e)
         {
             string reqeustURL = e.HttpClient.Request.Url;
+
             if (reqeustURL.Contains("filelist.xml"))
             {
                 string basefirm = textBox1.Text, custfirm = textBox7.Text, preloadfirm = textBox4.Text;
@@ -265,7 +252,50 @@ namespace HiSuite_Proxy
             try
             {
                 string reqeustURL = e.HttpClient.Request.Url;
-                if(reqeustURL.EndsWith(":7777/addROM.txt"))
+                if (reqeustURL.EndsWith(":7777/getFile.txt"))
+                {
+                    string Body = await e.GetRequestBodyAsString();
+                    RomDetails.gZipWebClient client = new RomDetails.gZipWebClient();
+                    string responseBody = "";
+                    try
+                    {
+                        responseBody = client.DownloadString(Body);
+                    }
+                    catch
+                    {
+
+                    }
+                    Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                    Headers.Add("Access-Control-Allow-Origin", new HttpHeader("Access-Control-Allow-Origin", e.HttpClient.Request.Headers.Headers["Origin"].Value));
+                    Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/plain"));
+                    e.Ok(responseBody, Headers);
+                }
+                else if (reqeustURL.EndsWith(":7777/checkRom.txt"))
+                {
+                    string Body = await e.GetRequestBodyAsString();
+                    Dictionary<string, HttpHeader> Headers = new Dictionary<string, HttpHeader>();
+                    Headers.Add("Access-Control-Allow-Origin", new HttpHeader("Access-Control-Allow-Origin", e.HttpClient.Request.Headers.Headers["Origin"].Value));
+                    Headers.Add("Content-Type", new HttpHeader("Content-Type", "text/plain"));
+
+                    bool isapprovedForInstallation;
+                    try
+                    {
+                        isapprovedForInstallation = RomDetails.ApprovedForInstallation(Body);
+                    }
+                    catch
+                    {
+                        isapprovedForInstallation = false;
+                    }
+                    if (isapprovedForInstallation)
+                    {
+                        e.Ok("YES", Headers);
+                    }
+                    else
+                    {
+                        e.Ok("NO", Headers);
+                    }
+                }
+                else if (reqeustURL.EndsWith(":7777/addROM.txt"))
                 {
                     if(e.HttpClient.Request.HasBody)
                     {
@@ -487,10 +517,10 @@ namespace HiSuite_Proxy
                             {
                                 opscheck = "increment";
                             }*/
-                            if (pacakgetype == opscheck)
+                            if (pacakgetype == opscheck || (radioButton4.Checked && pacakgetype == "full_indicator"))
                             {
                                 string responsedata = Encoding.UTF8.GetString(Properties.Resources.responsedata).Replace("\r\n", "");
-                                if(checkBox9.Checked) // EMUI 7
+                                /*if(checkBox9.Checked) // EMUI 7
                                 {
                                     responsedata = Encoding.UTF8.GetString(Properties.Resources.emui7resp).Replace("\r\n", "");
                                     bool Iveabase = (GetURLVersion(textBox1.Text, 0) != "Unknown");
@@ -513,8 +543,8 @@ namespace HiSuite_Proxy
                                         responsedata = responsedata.Replace("VersionURL", textBox1.Text);
                                         responsedata = responsedata.Replace("Unknown1", textBox2.Text);
                                     }
-                                }
-                                if(checkBox8.Checked) // EMUI 8
+                                }*/
+                                if(checkBox8.Checked) // Old Firmware
                                 {
                                     responsedata = Encoding.UTF8.GetString(Properties.Resources.oldresponse).Replace("\r\n", "");
                                     bool Iveabase = (GetURLVersion(textBox1.Text, 0) != "Unknown");
@@ -740,7 +770,7 @@ namespace HiSuite_Proxy
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Process.Start("https://github.com/ProfessorJTJ/HISuite-Proxy/releases/download/1.8.8/HiSuite_10.0.1.100_OVE.zip");
+            Process.Start("https://github.com/ProfessorJTJ/HISuite-Proxy/releases/download/2.3.5/Hisuite_10.1.0.550_OVE.zip");
         }
 
         public bool ReplaceComponent(string rawfile, string patchedfile, bool systemadmin = false, bool ReplaceOriginalFile = true, string NewFileDirectory = null)
@@ -803,7 +833,12 @@ namespace HiSuite_Proxy
                 string settings = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) + @"\HiSuite\RunInfo.ini";
 
                 string hiSuiteVersionNumber = File.ReadAllText(settings);
-                if (hiSuiteVersionNumber.Contains("version=10.1.0.550"))
+                if (hiSuiteVersionNumber.Contains("version=8.0.1.300") || hiSuiteVersionNumber.Contains("version=8.0.1.302"))
+                {
+                    finddata = new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0x51, 0xFF, 0x15, 0x90, 0x32, 0x01, 0x10 };
+                    replacedata = new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0x51, 0xFF, 0x15, 0x90, 0x32, 0x01, 0x10 };
+                }
+                else if (hiSuiteVersionNumber.Contains("version=10.1.0.550"))
                 {
                     finddata = new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0xFF, 0x35, 0x08, 0xD6, 0x02, 0x10 };
                     replacedata = new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0xFF, 0x35, 0x08, 0xD6, 0x02, 0x10 };
@@ -814,6 +849,15 @@ namespace HiSuite_Proxy
                     finddata = new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0xFF, 0x35, 0x70, 0x68, 0x03, 0x10 };
                     //FF 35 70 68 03 10
                     replacedata = new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0xFF, 0x35, 0x70, 0x68, 0x03, 0x10 };
+                    newHiSuite = true;
+                    //return false;
+                }
+				else if (hiSuiteVersionNumber.Contains("version=11.0.0.580") || hiSuiteVersionNumber.Contains("version=11.0.0.590"))
+                {
+                    //6A 00 6A 01 FF 35 70 78 03 10
+                    finddata = new byte[] { 0x6A, 0x00, 0x6A, 0x01, 0xFF, 0x35, 0x70, 0x78, 0x03, 0x10 };
+                    //FF 35 70 68 03 10
+                    replacedata = new byte[] { 0x6A, 0x00, 0x6A, 0x00, 0xFF, 0x35, 0x70, 0x78, 0x03, 0x10 };
                     newHiSuite = true;
                     //return false;
                 }

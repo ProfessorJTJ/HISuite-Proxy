@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,7 +34,10 @@ namespace HiSuite_Proxy
             }
             else
             {
-                throw new Exception("Invalid URL Passed");
+                if (url.Contains("update."))
+                    return null;
+                else
+                    throw new Exception("Invalid URL Passed");
             }
         }
 
@@ -152,7 +155,7 @@ namespace HiSuite_Proxy
             Finished = true;
             progress.Close();
         }
-        private static bool ApprovedForInstallation(string versionID)
+        public static bool ApprovedForInstallation(string versionID)
         {
             TcpClient client = new TcpClient();
             IPAddress[] address = Dns.GetHostAddresses("query.hicloud.com");
@@ -269,7 +272,7 @@ namespace HiSuite_Proxy
                 {
                     if (base64response.Contains("versionNumber"))
                     {
-                        MessageBox.Show("Weird, but might be approved.");
+                        //MessageBox.Show("Weird, but might be approved.");
                         return true;
                     }
                     return false;

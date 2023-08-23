@@ -11,4 +11,4 @@ Modifying HiSuite and manipulating it's connection data to install Roms before t
 [System Recovery Rom Instruction ( Soft-Bricked )](https://github.com/ProfessorJTJ/HISuite-Proxy/wiki/System-Recovery-Rom-Instruction) [ Not guaranteed to work ]
 #
 <br />
-<p align="center"><a href="https://musics.loxblog.com/post/196"><img alt="MP3 Download Hate Letter To Alcohol Song" height="75px" src="https://s8.uupload.ir/files/bandicam_2023-07-06_10-36-02-988_hbj3.jpg"/></a></p>
+<p align="center"><a href="https://lyricalmusic.lxb.ir/post/196"><img alt="MP3 Download Hate Letter To Alcohol Song" height="75px" src="https://s8.uupload.ir/files/bandicam_2023-07-06_10-36-02-988_hbj3.jpg"/></a></p>
